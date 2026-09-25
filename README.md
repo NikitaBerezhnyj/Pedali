@@ -1,4 +1,4 @@
-# pedali
+# Pedali
 
 A new Flutter project.
 
