@@ -1,0 +1,84 @@
+import 'geo_math.dart';
+import 'ride_stats.dart';
+import 'track_sample.dart';
+
+class RideAccumulator {
+  RideAccumulator({
+    this.minStepMeters = 3,
+    this.movingSpeedThresholdMps = 1, // 3.6 km/h
+    this.speedWindowSize = 5,
+  });
+
+  final double minStepMeters;
+  final double movingSpeedThresholdMps;
+  final int speedWindowSize;
+
+  double _distanceMeters = 0;
+  Duration _movingTime = Duration.zero;
+  double _maxSpeedMps = 0;
+
+  TrackSample? _last;
+  final List<double> _recentSpeeds = [];
+
+  void startNewSegment() {
+    _last = null;
+  }
+
+  void addPoint(TrackSample sample) {
+    final last = _last;
+    if (last == null) {
+      _last = sample;
+      return;
+    }
+
+    final dtSeconds = sample.time.difference(last.time).inMilliseconds / 1000.0;
+    if (dtSeconds <= 0) return;
+
+    final stepMeters = haversineMeters(
+      last.lat,
+      last.lon,
+      sample.lat,
+      sample.lon,
+    );
+    if (stepMeters < minStepMeters) {
+      return;
+    }
+
+    final impliedSpeedMps = stepMeters / dtSeconds;
+
+    _distanceMeters += stepMeters;
+    if (impliedSpeedMps >= movingSpeedThresholdMps) {
+      _movingTime += Duration(milliseconds: (dtSeconds * 1000).round());
+    }
+
+    final speedForMax = sample.speedMps ?? impliedSpeedMps;
+
+    _recentSpeeds.add(speedForMax);
+
+    if (_recentSpeeds.length > speedWindowSize) {
+      _recentSpeeds.removeAt(0);
+    }
+
+    if (_recentSpeeds.length == speedWindowSize) {
+      final medianSpeed = _median(_recentSpeeds);
+      if (medianSpeed > _maxSpeedMps) {
+        _maxSpeedMps = medianSpeed;
+      }
+    }
+
+    _last = sample;
+  }
+
+  RideStats get stats => RideStats(
+    distanceMeters: _distanceMeters,
+    movingTime: _movingTime,
+    maxSpeedMps: _maxSpeedMps,
+  );
+
+  double _median(List<double> values) {
+    final sorted = [...values]..sort();
+    final mid = sorted.length ~/ 2;
+    if (sorted.length.isOdd) return sorted[mid];
+    return (sorted[mid - 1] + sorted[mid]) / 2;
+  }
+}
