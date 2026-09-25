@@ -1,0 +1,100 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/widgets/app_header.dart';
+import '../../l10n/app_localizations.dart';
+import 'locale_provider.dart';
+import 'theme_provider.dart';
+
+class SettingsScreen extends ConsumerWidget {
+  const SettingsScreen({super.key});
+
+  static const supportedLocales = {
+    'English': Locale('en'),
+    'Українська': Locale('uk'),
+    'Español': Locale('es'),
+    'Français': Locale('fr'),
+  };
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppLocalizations.of(context)!;
+
+    final locale = ref.watch(localeProvider);
+    final theme = ref.watch(themeProvider);
+
+    final selectedLanguage = supportedLocales.entries
+        .firstWhere(
+          (entry) => entry.value.languageCode == locale.languageCode,
+          orElse: () => supportedLocales.entries.first,
+        )
+        .key;
+
+    return Scaffold(
+      appBar: AppHeader(title: 'Налаштування', showBackButton: true),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              t.languageLabel,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+
+            DropdownButtonFormField<String>(
+              initialValue: selectedLanguage,
+              items: supportedLocales.keys
+                  .map(
+                    (language) => DropdownMenuItem(
+                      value: language,
+                      child: Text(language),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (language) {
+                if (language == null) return;
+
+                ref
+                    .read(localeProvider.notifier)
+                    .setLocale(supportedLocales[language]!);
+              },
+            ),
+
+            const SizedBox(height: 24),
+
+            Text(
+              t.themeLabel,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+
+            DropdownButtonFormField<ThemeMode>(
+              initialValue: theme,
+              items: [
+                DropdownMenuItem(
+                  value: ThemeMode.system,
+                  child: Text(t.systemThemeLabel),
+                ),
+                DropdownMenuItem(
+                  value: ThemeMode.light,
+                  child: Text(t.lightThemeLabel),
+                ),
+                DropdownMenuItem(
+                  value: ThemeMode.dark,
+                  child: Text(t.darkThemeLabel),
+                ),
+              ],
+              onChanged: (mode) {
+                if (mode == null) return;
+
+                ref.read(themeProvider.notifier).setTheme(mode);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
