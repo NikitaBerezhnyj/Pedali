@@ -33,6 +33,7 @@ class GeolocatorLocationSource implements LocationSource {
         notificationText: 'Записую поїздку',
         enableWakeLock: true,
         setOngoing: true,
+        notificationIcon: AndroidResource(name: 'ic_notification'),
       ),
     );
     return Geolocator.getPositionStream(
