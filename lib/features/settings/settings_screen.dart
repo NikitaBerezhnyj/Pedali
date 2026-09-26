@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedali/core/providers/units_provider.dart';
+import 'package:pedali/core/units.dart';
 
 import '../../core/widgets/app_header.dart';
 import '../../l10n/app_localizations.dart';
-import 'locale_provider.dart';
-import 'theme_provider.dart';
+import '../../core/providers/locale_provider.dart';
+import '../../core/providers/theme_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -90,6 +92,30 @@ class SettingsScreen extends ConsumerWidget {
                 if (mode == null) return;
 
                 ref.read(themeProvider.notifier).setTheme(mode);
+              },
+            ),
+
+            const SizedBox(height: 24),
+            Text(
+              'Одиниці',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<UnitSystem>(
+              initialValue: ref.watch(unitsProvider),
+              items: const [
+                DropdownMenuItem(
+                  value: UnitSystem.metric,
+                  child: Text('Кілометри'),
+                ),
+                DropdownMenuItem(
+                  value: UnitSystem.imperial,
+                  child: Text('Милі'),
+                ),
+              ],
+              onChanged: (units) {
+                if (units == null) return;
+                ref.read(unitsProvider.notifier).setUnits(units);
               },
             ),
           ],

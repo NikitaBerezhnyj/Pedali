@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pedali/core/providers.dart';
+import 'package:pedali/core/providers/shared_prefs_provider.dart';
 
 class ThemeNotifier extends Notifier<ThemeMode> {
   @override

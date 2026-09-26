@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pedali/core/providers.dart';
+import 'package:pedali/core/providers/locale_provider.dart';
+import 'package:pedali/core/providers/shared_prefs_provider.dart';
+import 'package:pedali/core/providers/theme_provider.dart';
+import 'package:pedali/features/splash/initial_screen.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
-
-import 'features/settings/locale_provider.dart';
-import 'features/settings/theme_provider.dart';
-import 'features/splash/initial_screen.dart';
-import 'l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
