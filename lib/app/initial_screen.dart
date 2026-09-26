@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../rides/ride_list_screen.dart';
+import 'package:pedali/features/rides/ride_list_screen.dart';
 import 'splash_screen.dart';
 
 class InitialScreen extends StatefulWidget {
