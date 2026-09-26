@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-
-import '../track/ride_stats.dart';
-import '../track/track_sample.dart';
-import 'app_database.dart';
+import 'package:pedali/core/db/app_database.dart';
+import 'package:pedali/core/models/monthly_stat.dart';
+import 'package:pedali/core/track/ride_stats.dart';
+import 'package:pedali/core/track/track_sample.dart';
 
 class RideSummary {
   const RideSummary({
@@ -124,6 +124,71 @@ class RideRepository {
           ..where((r) => r.status.equalsValue(RideStatus.finished))
           ..orderBy([(r) => OrderingTerm.desc(r.startedAt)]))
         .watch();
+  }
+
+  Future<Ride?> getRide(int id) {
+    return (_db.select(
+      _db.rides,
+    )..where((r) => r.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<Ride?> longestRide() {
+    return (_db.select(_db.rides)
+          ..where((r) => r.status.equalsValue(RideStatus.finished))
+          ..orderBy([(r) => OrderingTerm.desc(r.distanceMeters)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  // Мінімальна дистанція, щоб короткий спуск не ставав "найшвидшою поїздкою"
+  Future<Ride?> fastestRide({double minDistanceMeters = 5000}) {
+    return (_db.select(_db.rides)
+          ..where(
+            (r) =>
+                r.status.equalsValue(RideStatus.finished) &
+                r.distanceMeters.isBiggerOrEqualValue(minDistanceMeters),
+          )
+          ..orderBy([(r) => OrderingTerm.desc(r.avgSpeedMps)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  Future<Ride?> longestRideByTime() {
+    return (_db.select(_db.rides)
+          ..where((r) => r.status.equalsValue(RideStatus.finished))
+          ..orderBy([(r) => OrderingTerm.desc(r.movingTimeMs)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  Future<List<MonthlyStat>> getMonthlyStats() async {
+    final rows = await _db
+        .customSelect(
+          '''
+    SELECT
+      strftime('%Y-%m', datetime(started_at / 1000, 'unixepoch', 'localtime')) AS month,
+      SUM(distance_meters) AS total_distance,
+      COUNT(*) AS ride_count,
+      SUM(moving_time_ms) AS total_moving_ms
+    FROM rides
+    WHERE status = 'finished'
+    GROUP BY month
+    ORDER BY month DESC
+    ''',
+          readsFrom: {_db.rides},
+        )
+        .get();
+
+    return rows
+        .map(
+          (r) => MonthlyStat(
+            monthKey: r.read<String>('month'),
+            totalDistanceMeters: r.read<double>('total_distance'),
+            rideCount: r.read<int>('ride_count'),
+            totalMovingTimeMs: r.read<int>('total_moving_ms'),
+          ),
+        )
+        .toList();
   }
 
   static final _dummyStart = DateTime.fromMillisecondsSinceEpoch(0);

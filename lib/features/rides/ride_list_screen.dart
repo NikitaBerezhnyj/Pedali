@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedali/core/format.dart';
+import 'package:pedali/core/providers/finished_rides_provider.dart';
+import 'package:pedali/core/providers/units_provider.dart';
+import 'package:pedali/core/units.dart';
+import 'package:pedali/core/widgets/app_button.dart';
+import 'package:pedali/core/widgets/app_header.dart';
+import 'package:pedali/features/recording/recorder_controller.dart';
+import 'package:pedali/features/recording/recording_screen.dart';
+import 'package:pedali/features/rides/ride_detail_screen.dart';
 import 'package:pedali/features/settings/settings_screen.dart';
-
-import '../../core/db/app_database.dart';
-import '../../core/format.dart';
-import '../../core/providers.dart';
-import '../../core/widgets/app_button.dart';
-import '../../core/widgets/app_header.dart';
-import '../recording/recorder_controller.dart';
-import '../recording/recording_screen.dart';
-
-final finishedRidesProvider = StreamProvider<List<Ride>>((ref) {
-  return ref.read(rideRepositoryProvider).watchFinishedRides();
-});
+import 'package:pedali/features/stats/stats_screen.dart';
 
 class RideListScreen extends ConsumerStatefulWidget {
   const RideListScreen({super.key});
-
   @override
   ConsumerState<RideListScreen> createState() => _RideListScreenState();
 }
@@ -32,7 +29,6 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     final controller = ref.read(recorderControllerProvider.notifier);
     final stale = await controller.checkForActiveRide();
     if (stale == null || !mounted) return;
-
     final resume = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -52,6 +48,13 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
       await controller.discardStaleRide(stale);
       ref.invalidate(finishedRidesProvider);
     }
+  }
+
+  Future<void> _openStats() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const StatsScreen()),
+    );
   }
 
   Future<void> _startRide() async {
@@ -74,8 +77,8 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final units = ref.watch(unitsProvider);
     final ridesAsync = ref.watch(finishedRidesProvider);
-
     return Scaffold(
       appBar: AppHeader(
         action: IconButton(
@@ -86,42 +89,67 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
       body: ridesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Помилка: $e')),
-        data: (rides) => rides.isEmpty
-            ? Center(
-                child: Text(
-                  'Поки що немає поїздок',
-                  style: theme.textTheme.bodyLarge,
-                ),
-              )
-            : ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: rides.length,
-                itemBuilder: (context, i) {
-                  final r = rides[i];
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      leading: const Icon(Icons.directions_bike),
-                      title: Text(formatDistance(r.distanceMeters)),
-                      subtitle: Text(
-                        '${formatDuration(Duration(milliseconds: r.movingTimeMs))} • '
-                        '${formatSpeed(r.avgSpeedMps)}',
-                      ),
-                    ),
-                  );
-                },
+        data: (rides) {
+          if (rides.isEmpty) {
+            return Center(
+              child: Text(
+                'Поки що немає поїздок',
+                style: theme.textTheme.bodyLarge,
               ),
+            );
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: rides.length,
+            itemBuilder: (context, i) {
+              final ride = rides[i];
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  leading: const Icon(Icons.directions_bike),
+                  title: Text(units.formatDistance(ride.distanceMeters)),
+                  subtitle: Text(
+                    '${formatDuration(Duration(milliseconds: ride.movingTimeMs))} • '
+                    '${units.formatSpeed(ride.avgSpeedMps)}',
+                  ),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => RideDetailScreen(rideId: ride.id),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        child: PrimaryButton(label: 'Почати поїздку', onPressed: _startRide),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            OutlineButton(
+              label: 'Статистика',
+              icon: Icons.bar_chart,
+              onPressed: _openStats,
+            ),
+            const SizedBox(height: 8),
+            PrimaryButton(
+              label: 'Почати поїздку',
+              icon: Icons.directions_bike,
+              onPressed: _startRide,
+            ),
+          ],
+        ),
       ),
     );
   }

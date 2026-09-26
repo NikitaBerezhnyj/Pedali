@@ -6,11 +6,13 @@ class PrimaryButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.color,
+    this.icon,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final Color? color;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,13 @@ class PrimaryButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-      child: Text(label),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (icon != null) ...[Icon(icon), const SizedBox(width: 8)],
+          Text(label),
+        ],
+      ),
     );
   }
 }
@@ -32,11 +40,13 @@ class OutlineButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.color,
+    this.icon,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final Color? color;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +57,13 @@ class OutlineButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-      child: Text(label),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (icon != null) ...[Icon(icon), const SizedBox(width: 8)],
+          Text(label),
+        ],
+      ),
     );
   }
 }

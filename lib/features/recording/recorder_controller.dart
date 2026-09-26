@@ -1,15 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/db/app_database.dart';
-import '../../core/db/ride_repository.dart';
-import '../../core/location/gps_point.dart';
-import '../../core/location/location_source.dart';
-import '../../core/providers.dart';
-import '../../core/track/location_filter.dart';
-import '../../core/track/ride_accumulator.dart';
-import '../../core/track/track_sample.dart';
+import 'package:pedali/core/db/app_database.dart';
+import 'package:pedali/core/db/ride_repository.dart';
+import 'package:pedali/core/location/gps_point.dart';
+import 'package:pedali/core/location/location_source.dart';
+import 'package:pedali/core/providers/database_provider.dart';
+import 'package:pedali/core/providers/location_source_provider.dart';
+import 'package:pedali/core/providers/monthly_stats_provider.dart';
+import 'package:pedali/core/providers/records_provider.dart';
+import 'package:pedali/core/track/location_filter.dart';
+import 'package:pedali/core/track/ride_accumulator.dart';
+import 'package:pedali/core/track/track_sample.dart';
 
 enum RecorderStatus { idle, recording, paused, saving }
 
@@ -129,8 +131,8 @@ class RecorderController extends Notifier<RecorderState> {
     _tickTimer = Timer.periodic(_tickInterval, (_) => _tick());
   }
 
-  Future<bool> stop() async {
-    if (!state.isActive) return false;
+  Future<void> stop() async {
+    if (!state.isActive) return;
 
     state = state.copyWith(status: RecorderStatus.saving);
     await _closeCurrentSegment();
@@ -143,10 +145,21 @@ class RecorderController extends Notifier<RecorderState> {
     await _repo.finishRide(rideId, now, stats);
     await _repo.setElapsedTime(rideId, state.elapsedTime);
 
-    final savable = stats.distanceMeters >= _minSavableDistanceMeters;
-    _resetLocalState();
-    return savable;
+    ref.invalidate(recordsProvider);
+    ref.invalidate(monthlyStatsProvider);
+
+    state = state.copyWith(status: RecorderStatus.idle);
   }
+
+  bool get isSavable => state.distanceMeters >= _minSavableDistanceMeters;
+
+  Future<void> discardLastRide() async {
+    final id = state.rideId;
+    if (id != null) await _repo.deleteRide(id);
+    _resetLocalState();
+  }
+
+  void acknowledgeSaved() => _resetLocalState();
 
   Future<void> deleteRide(int rideId) => _repo.deleteRide(rideId);
 

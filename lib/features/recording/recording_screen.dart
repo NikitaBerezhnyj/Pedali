@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedali/core/providers/units_provider.dart';
+import 'package:pedali/core/units.dart';
 
 import '../../core/format.dart';
 import '../../core/widgets/app_button.dart';
@@ -28,12 +30,15 @@ class RecordingScreen extends ConsumerWidget {
         ],
       ),
     );
+
     if (confirmed != true || !context.mounted) return;
 
-    final savable = await ref.read(recorderControllerProvider.notifier).stop();
+    final controller = ref.read(recorderControllerProvider.notifier);
+
+    await controller.stop();
     if (!context.mounted) return;
 
-    if (!savable) {
+    if (!controller.isSavable) {
       final keep = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -51,13 +56,14 @@ class RecordingScreen extends ConsumerWidget {
           ],
         ),
       );
-      // rideId вже очищено зі стану контролера після stop(), тому видаляємо
-      // останню поїздку через список, якщо треба — простіше: підтримати
-      // rideId для цього діалогу окремо, якщо знадобиться пізніше.
+
       if (keep == false) {
-        // TODO: видалення надто короткої поїздки — додамо разом з екраном
-        // деталей поїздки в наступній сесії, коли буде видно rideId у списку.
+        await controller.discardLastRide();
+      } else {
+        controller.acknowledgeSaved();
       }
+    } else {
+      controller.acknowledgeSaved();
     }
 
     if (context.mounted) Navigator.pop(context);
@@ -69,6 +75,9 @@ class RecordingScreen extends ConsumerWidget {
     final cs = theme.colorScheme;
     final s = ref.watch(recorderControllerProvider);
     final c = ref.read(recorderControllerProvider.notifier);
+    final units = ref.watch(unitsProvider);
+
+    final currentSpeed = s.currentSpeedMps;
 
     return Scaffold(
       appBar: const AppHeader(title: 'Поїздка'),
@@ -77,15 +86,33 @@ class RecordingScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Text(
-                formatDistance(s.distanceMeters),
-                style: theme.textTheme.displayMedium?.copyWith(
+                currentSpeed == null
+                    ? '--'
+                    : units.formatSpeed(currentSpeed).split(' ').first,
+                style: theme.textTheme.displayLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  fontSize: 72,
                 ),
               ),
-              Text('Дистанція', style: theme.textTheme.bodyMedium),
-              const SizedBox(height: 32),
+              Text(
+                currentSpeed == null
+                    ? 'Пошук сигналу'
+                    : units == UnitSystem.imperial
+                    ? 'mph'
+                    : 'km/h',
+                style: theme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                units.formatDistance(s.distanceMeters),
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text('Дистанція', style: theme.textTheme.bodySmall),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -105,11 +132,11 @@ class RecordingScreen extends ConsumerWidget {
                 children: [
                   _Stat(
                     label: 'Сер. швидкість',
-                    value: formatSpeed(s.avgSpeedMps),
+                    value: units.formatSpeed(s.avgSpeedMps),
                   ),
                   _Stat(
                     label: 'Макс. швидкість',
-                    value: formatSpeed(s.maxSpeedMps),
+                    value: units.formatSpeed(s.maxSpeedMps),
                   ),
                 ],
               ),
