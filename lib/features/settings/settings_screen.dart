@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedali/core/providers/locale_provider.dart';
+import 'package:pedali/core/providers/theme_provider.dart';
 import 'package:pedali/core/providers/units_provider.dart';
 import 'package:pedali/core/units.dart';
-
-import '../../core/widgets/app_header.dart';
-import '../../l10n/app_localizations.dart';
-import '../../core/providers/locale_provider.dart';
-import '../../core/providers/theme_provider.dart';
+import 'package:pedali/core/widgets/app_header.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
