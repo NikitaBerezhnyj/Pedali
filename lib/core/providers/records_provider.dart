@@ -1,19 +1,38 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedali/core/db/app_database.dart';
 import 'package:pedali/core/models/ride_records.dart';
-import 'package:pedali/core/providers/ride_repository_provider.dart';
+import 'package:pedali/core/providers/finished_rides_provider.dart';
 
-final recordsProvider = FutureProvider<RideRecords>((ref) async {
-  final repository = ref.read(rideRepositoryProvider);
+final recordsProvider = Provider<RideRecords>((ref) {
+  final rides = ref.watch(finishedRidesProvider).value ?? [];
 
-  final results = await Future.wait([
-    repository.longestRide(),
-    repository.fastestRide(),
-    repository.longestRideByTime(),
-  ]);
+  if (rides.isEmpty) {
+    return const RideRecords();
+  }
+
+  final longest = rides.reduce(
+    (a, b) => a.distanceMeters > b.distanceMeters ? a : b,
+  );
+
+  final longestByTime = rides.reduce(
+    (a, b) => a.movingTimeMs > b.movingTimeMs ? a : b,
+  );
+
+  final fastestCandidates = rides
+      .where((ride) => ride.distanceMeters >= 5000)
+      .toList();
+
+  Ride? fastest;
+
+  if (fastestCandidates.isNotEmpty) {
+    fastest = fastestCandidates.reduce(
+      (a, b) => a.avgSpeedMps > b.avgSpeedMps ? a : b,
+    );
+  }
 
   return RideRecords(
-    longest: results[0],
-    fastest: results[1],
-    longestByTime: results[2],
+    longest: longest,
+    fastest: fastest,
+    longestByTime: longestByTime,
   );
 });

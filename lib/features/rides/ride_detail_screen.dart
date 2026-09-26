@@ -54,7 +54,7 @@ class RideDetailScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final rideAsync = ref.watch(rideProvider(rideId));
-    final recordsAsync = ref.watch(recordsProvider);
+    final records = ref.watch(recordsProvider);
     final units = ref.watch(unitsProvider);
 
     return Scaffold(
@@ -72,19 +72,17 @@ class RideDetailScreen extends ConsumerWidget {
             isUtc: true,
           ).toLocal();
 
-          final records = recordsAsync.value;
-
           final achievements = <String>[];
 
-          if (records?.longest?.id == ride.id) {
+          if (records.longest?.id == ride.id) {
             achievements.add('Найдовша поїздка');
           }
 
-          if (records?.fastest?.id == ride.id) {
+          if (records.fastest?.id == ride.id) {
             achievements.add('Найвища середня швидкість');
           }
 
-          if (records?.longestByTime?.id == ride.id) {
+          if (records.longestByTime?.id == ride.id) {
             achievements.add('Найдовший час у русі');
           }
 

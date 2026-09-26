@@ -8,7 +8,6 @@ import 'package:pedali/core/location/location_source.dart';
 import 'package:pedali/core/providers/database_provider.dart';
 import 'package:pedali/core/providers/location_source_provider.dart';
 import 'package:pedali/core/providers/monthly_stats_provider.dart';
-import 'package:pedali/core/providers/records_provider.dart';
 import 'package:pedali/core/track/location_filter.dart';
 import 'package:pedali/core/track/ride_accumulator.dart';
 import 'package:pedali/core/track/track_sample.dart';
@@ -145,7 +144,6 @@ class RecorderController extends Notifier<RecorderState> {
     await _repo.finishRide(rideId, now, stats);
     await _repo.setElapsedTime(rideId, state.elapsedTime);
 
-    ref.invalidate(recordsProvider);
     ref.invalidate(monthlyStatsProvider);
 
     state = state.copyWith(status: RecorderStatus.idle);
