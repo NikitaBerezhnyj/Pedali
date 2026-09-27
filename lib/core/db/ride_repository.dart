@@ -92,7 +92,6 @@ class RideRepository {
         endedAt: Value(endedAt.millisecondsSinceEpoch),
         distanceMeters: Value(stats.distanceMeters),
         movingTimeMs: Value(stats.movingTime.inMilliseconds),
-        elapsedTimeMs: Value(endedAt.difference(_dummyStart).inMilliseconds),
         maxSpeedMps: Value(stats.maxSpeedMps),
         avgSpeedMps: Value(stats.avgSpeedMps),
       ),
@@ -190,6 +189,4 @@ class RideRepository {
         )
         .toList();
   }
-
-  static final _dummyStart = DateTime.fromMillisecondsSinceEpoch(0);
 }
