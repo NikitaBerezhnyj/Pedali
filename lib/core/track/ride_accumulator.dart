@@ -1,3 +1,4 @@
+import 'package:pedali/core/constants.dart';
 import 'geo_math.dart';
 import 'ride_stats.dart';
 import 'track_sample.dart';
@@ -7,10 +8,9 @@ enum PointOutcome { accepted, ignoredStationary, rejectedImplausible }
 class RideAccumulator {
   RideAccumulator({
     this.minStepMeters = 3,
-    this.movingSpeedThresholdMps = 1, // 3.6 km/h
+    this.movingSpeedThresholdMps = 1,
     this.speedWindowSize = 5,
-    this.maxPlausibleSpeedMps =
-        30, // ~108 км/год, стеля фізичної правдоподібності
+    this.maxPlausibleSpeedMps = maxPlausibleSpeedMpsDefault,
   });
 
   final double minStepMeters;
