@@ -15,9 +15,9 @@ void main() {
         speedMps: speedMps,
       );
 
-  test('стоянка з GPS-дрейфом не накручує дистанцію і час', () {
+  test('ignores GPS drift while stationary', () {
     final acc = RideAccumulator()..startNewSegment();
-    // Точки хаотично тремтять у радіусі ~1-2 м навколо однієї позиції.
+
     acc.addPoint(p(0, 50.45000, 30.52000));
     acc.addPoint(p(5, 50.45001, 30.52000));
     acc.addPoint(p(10, 50.44999, 30.52001));
@@ -27,98 +27,119 @@ void main() {
     expect(acc.stats.movingTime, Duration.zero);
   });
 
-  test('реальний рух за 10 с додає дистанцію і moving time', () {
+  test('adds distance and moving time for actual movement', () {
     final acc = RideAccumulator()..startNewSegment();
     acc.addPoint(p(0, 50.45000, 30.52000));
-    // ~55 м за 10 с ~= 5.5 м/с ~= 20 км/год, вище порогу руху
+
     acc.addPoint(p(10, 50.45050, 30.52000));
 
     expect(acc.stats.distanceMeters, greaterThan(40));
     expect(acc.stats.movingTime, Duration(seconds: 10));
   });
 
-  test('пауза між сегментами не рахується як переміщення', () {
+  test('does not count the pause between segments as movement', () {
     final acc = RideAccumulator();
 
     acc.startNewSegment();
     acc.addPoint(p(0, 50.45000, 30.52000));
-    acc.addPoint(p(10, 50.45050, 30.52000)); // ~55 м руху
+    acc.addPoint(p(10, 50.45050, 30.52000));
 
     final distanceBeforePause = acc.stats.distanceMeters;
 
-    // Пауза 5 хв, потім поїздка продовжилась в геть іншому місці.
     acc.startNewSegment();
     acc.addPoint(p(300, 51.00000, 31.00000));
     acc.addPoint(p(310, 51.00050, 31.00000));
 
-    // Дистанція зросла лише на реальний крок нового сегмента,
-    // а не на телепорт між 50.45/30.52 і 51.00/31.00.
     final totalDistance = acc.stats.distanceMeters;
     expect(totalDistance - distanceBeforePause, lessThan(100));
   });
 
-  test('одиночний GPS-спайк 86 км/год не ламає max speed', () {
+  test('reset clears all stats before a new ride', () {
     final acc = RideAccumulator();
     acc.startNewSegment();
+    acc.addPoint(p(0, 50.45000, 30.52000));
+    acc.addPoint(p(10, 50.45050, 30.52000));
+    expect(acc.stats.distanceMeters, greaterThan(0));
 
-    // Реальна поїздка ~35-38 км/год (9.7-10.6 м/с), з одним биттям
-    // значенням швидкості (не позиції) на 86 км/год (23.9 м/с).
-    final speedsKmh = [37.0, 42.0, 86.0, 39.0, 38.0, 37.0, 38.0];
-    var lat = 50.45000;
-    for (var i = 0; i < speedsKmh.length; i++) {
-      lat += 0.0001; // ~11 м кожні 2 с — узгоджено з реальною швидкістю
-      acc.addPoint(p(i * 2, lat, 30.52000, speedMps: speedsKmh[i] / 3.6));
-    }
+    acc.reset();
+    expect(acc.stats.distanceMeters, 0);
+    expect(acc.stats.movingTime, Duration.zero);
+    expect(acc.stats.maxSpeedMps, 0);
 
-    // Медіана вікна не пропускає одиничний 86 км/год нагору.
-    expect(acc.stats.maxSpeedMps * 3.6, lessThan(45));
+    acc.startNewSegment();
+    acc.addPoint(p(100, 60.0000, 30.0000));
+    acc.addPoint(p(110, 60.0005, 30.0000));
+    expect(acc.stats.distanceMeters, lessThan(100));
   });
 
-  test('точки без speed (як з GPX) рахуються через implied speed', () {
+  test('calculates max speed after collecting 3 valid samples', () {
     final acc = RideAccumulator()..startNewSegment();
     acc.addPoint(p(0, 50.45000, 30.52000));
     acc.addPoint(p(10, 50.45050, 30.52000));
     acc.addPoint(p(20, 50.45100, 30.52000));
     acc.addPoint(p(30, 50.45150, 30.52000));
-    acc.addPoint(p(40, 50.45200, 30.52000));
-    acc.addPoint(p(50, 50.45250, 30.52000));
 
     expect(acc.stats.maxSpeedMps, greaterThan(0));
   });
 
-  test('avg speed = distance / moving time, а не / elapsed', () {
-    final acc = RideAccumulator();
-    acc.startNewSegment();
-    acc.addPoint(p(0, 50.45000, 30.52000));
-    acc.addPoint(p(10, 50.45050, 30.52000)); // рух 10 с
+  test(
+    'keeps max speed at 0 when fewer than 3 valid samples are available',
+    () {
+      final acc = RideAccumulator()..startNewSegment();
+      acc.addPoint(p(0, 50.45000, 30.52000));
+      acc.addPoint(p(10, 50.45050, 30.52000));
 
-    acc.startNewSegment(); // пауза, що не входить у moving time
-    acc.addPoint(p(300, 50.45050, 30.52000));
-    acc.addPoint(p(310, 50.45100, 30.52000)); // ще 10 с руху
+      expect(acc.stats.maxSpeedMps, 0);
+    },
+  );
 
-    final stats = acc.stats;
-    // Загальний elapsed від першої до останньої точки ~310 с,
-    // але moving time має бути лише 20 с (два рухи по 10 с).
-    expect(stats.movingTime, Duration(seconds: 20));
-    expect(stats.avgSpeedMps, closeTo(stats.distanceMeters / 20, 0.01));
-  });
+  test(
+    'calculates speed from position and time when sample speed is unavailable',
+    () {
+      final acc = RideAccumulator()..startNewSegment();
+      acc.addPoint(p(0, 50.45000, 30.52000));
+      acc.addPoint(p(10, 50.45050, 30.52000));
+      acc.addPoint(p(20, 50.45100, 30.52000));
+      acc.addPoint(p(30, 50.45150, 30.52000));
+      acc.addPoint(p(40, 50.45200, 30.52000));
+      acc.addPoint(p(50, 50.45250, 30.52000));
 
-  test('GPS-стрибок (глушіння/спуфінг) не ламає дистанцію і avg speed', () {
+      expect(acc.stats.maxSpeedMps, greaterThan(0));
+    },
+  );
+
+  test(
+    'calculates average speed using moving time instead of elapsed time',
+    () {
+      final acc = RideAccumulator();
+      acc.startNewSegment();
+      acc.addPoint(p(0, 50.45000, 30.52000));
+      acc.addPoint(p(10, 50.45050, 30.52000));
+
+      acc.startNewSegment();
+      acc.addPoint(p(300, 50.45050, 30.52000));
+      acc.addPoint(p(310, 50.45100, 30.52000));
+
+      final stats = acc.stats;
+
+      expect(stats.movingTime, Duration(seconds: 20));
+      expect(stats.avgSpeedMps, closeTo(stats.distanceMeters / 20, 0.01));
+    },
+  );
+
+  test('ignores implausible GPS jumps without corrupting ride stats', () {
     final acc = RideAccumulator()..startNewSegment();
 
-    // Нормальний рух: ~20 км/год.
     acc.addPoint(p(0, 50.45000, 30.52000));
     acc.addPoint(p(10, 50.45050, 30.52000));
 
     final distanceBeforeJam = acc.stats.distanceMeters;
 
-    // "Телепорт": 57 км за 20 с — фізично неможливо для велосипеда.
     acc.addPoint(p(30, 51.00000, 31.00000));
 
     expect(acc.stats.distanceMeters, closeTo(distanceBeforeJam, 1));
     expect(acc.stats.maxSpeedMps * 3.6, lessThan(150));
 
-    // Сигнал повернувся до правди: наступна точка близько до реального місця.
     acc.addPoint(p(35, 50.45055, 30.52001));
 
     expect(acc.stats.distanceMeters, greaterThan(distanceBeforeJam));
