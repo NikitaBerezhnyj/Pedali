@@ -1,14 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/format.dart';
 import 'package:pedali/core/providers/units_provider.dart';
+import 'package:pedali/core/providers/keep_screen_on_provider.dart';
 import 'package:pedali/core/units.dart';
 import 'package:pedali/core/widgets/app_button.dart';
 import 'package:pedali/core/widgets/app_header.dart';
 import 'recorder_controller.dart';
 
-class RecordingScreen extends ConsumerWidget {
+class RecordingScreen extends ConsumerStatefulWidget {
   const RecordingScreen({super.key});
+
+  @override
+  ConsumerState<RecordingScreen> createState() => _RecordingScreenState();
+}
+
+class _RecordingScreenState extends ConsumerState<RecordingScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (ref.read(keepScreenOnProvider)) {
+      WakelockPlus.enable();
+    }
+  }
+
+  @override
+  void dispose() {
+    WakelockPlus.disable();
+    super.dispose();
+  }
 
   Future<void> _confirmStop(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
@@ -69,7 +90,7 @@ class RecordingScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final s = ref.watch(recorderControllerProvider);

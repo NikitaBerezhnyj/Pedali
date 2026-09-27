@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedali/core/providers/keep_screen_on_provider.dart';
 import 'package:pedali/core/providers/locale_provider.dart';
 import 'package:pedali/core/providers/theme_provider.dart';
 import 'package:pedali/core/providers/units_provider.dart';
@@ -115,6 +116,20 @@ class SettingsScreen extends ConsumerWidget {
               onChanged: (units) {
                 if (units == null) return;
                 ref.read(unitsProvider.notifier).setUnits(units);
+              },
+            ),
+
+            const SizedBox(height: 24),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text(
+                'Не вимикати екран під час запису',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              subtitle: const Text('Витрачає більше заряду батареї'),
+              value: ref.watch(keepScreenOnProvider),
+              onChanged: (enabled) {
+                ref.read(keepScreenOnProvider.notifier).setEnabled(enabled);
               },
             ),
           ],
