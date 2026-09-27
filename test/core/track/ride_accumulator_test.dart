@@ -78,6 +78,10 @@ void main() {
     final acc = RideAccumulator()..startNewSegment();
     acc.addPoint(p(0, 50.45000, 30.52000));
     acc.addPoint(p(10, 50.45050, 30.52000));
+    acc.addPoint(p(20, 50.45100, 30.52000));
+    acc.addPoint(p(30, 50.45150, 30.52000));
+    acc.addPoint(p(40, 50.45200, 30.52000));
+    acc.addPoint(p(50, 50.45250, 30.52000));
 
     expect(acc.stats.maxSpeedMps, greaterThan(0));
   });
@@ -97,5 +101,27 @@ void main() {
     // але moving time має бути лише 20 с (два рухи по 10 с).
     expect(stats.movingTime, Duration(seconds: 20));
     expect(stats.avgSpeedMps, closeTo(stats.distanceMeters / 20, 0.01));
+  });
+
+  test('GPS-стрибок (глушіння/спуфінг) не ламає дистанцію і avg speed', () {
+    final acc = RideAccumulator()..startNewSegment();
+
+    // Нормальний рух: ~20 км/год.
+    acc.addPoint(p(0, 50.45000, 30.52000));
+    acc.addPoint(p(10, 50.45050, 30.52000));
+
+    final distanceBeforeJam = acc.stats.distanceMeters;
+
+    // "Телепорт": 57 км за 20 с — фізично неможливо для велосипеда.
+    acc.addPoint(p(30, 51.00000, 31.00000));
+
+    expect(acc.stats.distanceMeters, closeTo(distanceBeforeJam, 1));
+    expect(acc.stats.maxSpeedMps * 3.6, lessThan(150));
+
+    // Сигнал повернувся до правди: наступна точка близько до реального місця.
+    acc.addPoint(p(35, 50.45055, 30.52001));
+
+    expect(acc.stats.distanceMeters, greaterThan(distanceBeforeJam));
+    expect(acc.stats.avgSpeedMps * 3.6, lessThan(50));
   });
 }

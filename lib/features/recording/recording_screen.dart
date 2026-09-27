@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedali/core/format.dart';
 import 'package:pedali/core/providers/units_provider.dart';
 import 'package:pedali/core/units.dart';
-
-import '../../core/format.dart';
-import '../../core/widgets/app_button.dart';
-import '../../core/widgets/app_header.dart';
+import 'package:pedali/core/widgets/app_button.dart';
+import 'package:pedali/core/widgets/app_header.dart';
 import 'recorder_controller.dart';
 
 class RecordingScreen extends ConsumerWidget {
@@ -156,7 +155,37 @@ class RecordingScreen extends ConsumerWidget {
                 Text(s.message!, style: const TextStyle(color: Colors.red)),
               ],
               const Spacer(),
-              if (s.status == RecorderStatus.recording) ...[
+              if (s.status == RecorderStatus.autoPaused) ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: cs.errorContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.gps_off, color: cs.onErrorContainer),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'GPS нестабільний — запис призупинено автоматично',
+                          style: TextStyle(color: cs.onErrorContainer),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlineButton(
+                    label: 'Стоп',
+                    color: cs.error,
+                    onPressed: () => _confirmStop(context, ref),
+                  ),
+                ),
+              ] else if (s.status == RecorderStatus.recording) ...[
                 SizedBox(
                   width: double.infinity,
                   child: OutlineButton(label: 'Пауза', onPressed: c.pause),

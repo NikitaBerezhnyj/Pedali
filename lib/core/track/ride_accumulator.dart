@@ -2,16 +2,21 @@ import 'geo_math.dart';
 import 'ride_stats.dart';
 import 'track_sample.dart';
 
+enum PointOutcome { accepted, ignoredStationary, rejectedImplausible }
+
 class RideAccumulator {
   RideAccumulator({
     this.minStepMeters = 3,
     this.movingSpeedThresholdMps = 1, // 3.6 km/h
     this.speedWindowSize = 5,
+    this.maxPlausibleSpeedMps =
+        30, // ~108 км/год, стеля фізичної правдоподібності
   });
 
   final double minStepMeters;
   final double movingSpeedThresholdMps;
   final int speedWindowSize;
+  final double maxPlausibleSpeedMps;
 
   double _distanceMeters = 0;
   Duration _movingTime = Duration.zero;
@@ -20,19 +25,24 @@ class RideAccumulator {
   TrackSample? _last;
   final List<double> _recentSpeeds = [];
 
+  int _spoofRejectedCount = 0;
+  int get spoofRejectedPointCount => _spoofRejectedCount;
+
   void startNewSegment() {
     _last = null;
   }
 
-  void addPoint(TrackSample sample) {
+  PointOutcome addPoint(TrackSample sample) {
     final last = _last;
     if (last == null) {
       _last = sample;
-      return;
+      return PointOutcome.accepted;
     }
 
     final dtSeconds = sample.time.difference(last.time).inMilliseconds / 1000.0;
-    if (dtSeconds <= 0) return;
+    if (dtSeconds <= 0) {
+      return PointOutcome.ignoredStationary;
+    }
 
     final stepMeters = haversineMeters(
       last.lat,
@@ -41,10 +51,15 @@ class RideAccumulator {
       sample.lon,
     );
     if (stepMeters < minStepMeters) {
-      return;
+      return PointOutcome.ignoredStationary;
     }
 
     final impliedSpeedMps = stepMeters / dtSeconds;
+
+    if (impliedSpeedMps > maxPlausibleSpeedMps) {
+      _spoofRejectedCount++;
+      return PointOutcome.rejectedImplausible;
+    }
 
     _distanceMeters += stepMeters;
     if (impliedSpeedMps >= movingSpeedThresholdMps) {
@@ -67,6 +82,7 @@ class RideAccumulator {
     }
 
     _last = sample;
+    return PointOutcome.accepted;
   }
 
   RideStats get stats => RideStats(

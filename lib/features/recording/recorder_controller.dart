@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/db/app_database.dart';
 import 'package:pedali/core/db/ride_repository.dart';
@@ -7,12 +6,11 @@ import 'package:pedali/core/location/gps_point.dart';
 import 'package:pedali/core/location/location_source.dart';
 import 'package:pedali/core/providers/database_provider.dart';
 import 'package:pedali/core/providers/location_source_provider.dart';
-import 'package:pedali/core/providers/monthly_stats_provider.dart';
 import 'package:pedali/core/track/location_filter.dart';
 import 'package:pedali/core/track/ride_accumulator.dart';
 import 'package:pedali/core/track/track_sample.dart';
 
-enum RecorderStatus { idle, recording, paused, saving }
+enum RecorderStatus { idle, recording, paused, autoPaused, saving }
 
 class RecorderState {
   const RecorderState({
@@ -40,8 +38,9 @@ class RecorderState {
   final String? message;
 
   bool get isRecording => status == RecorderStatus.recording;
-  bool get isPaused => status == RecorderStatus.paused;
-  bool get isActive => isRecording || isPaused;
+  bool get isManuallyPaused => status == RecorderStatus.paused;
+  bool get isAutoPaused => status == RecorderStatus.autoPaused;
+  bool get isActive => isRecording || isManuallyPaused || isAutoPaused;
 
   RecorderState copyWith({
     RecorderStatus? status,
@@ -72,6 +71,10 @@ const _minSavableDistanceMeters = 100.0;
 const _flushInterval = Duration(seconds: 5);
 const _tickInterval = Duration(seconds: 1);
 
+const _autoPauseAfter = Duration(seconds: 20);
+
+const _autoResumeAfter = Duration(seconds: 4);
+
 class RecorderController extends Notifier<RecorderState> {
   StreamSubscription<GpsPoint>? _positionSub;
   Timer? _flushTimer;
@@ -84,6 +87,9 @@ class RecorderController extends Notifier<RecorderState> {
   int? _segmentId;
   DateTime? _segmentStartedAt;
   Duration _elapsedBeforeCurrentSegment = Duration.zero;
+
+  DateTime? _badSince;
+  DateTime? _goodSince;
 
   RideRepository get _repo => RideRepository(ref.read(databaseProvider));
   LocationSource get _location => ref.read(locationSourceProvider);
@@ -110,6 +116,8 @@ class RecorderController extends Notifier<RecorderState> {
     final now = DateTime.now().toUtc();
     final rideId = await _repo.startRide(now);
     _elapsedBeforeCurrentSegment = Duration.zero;
+    _badSince = null;
+    _goodSince = null;
 
     state = RecorderState(status: RecorderStatus.recording, rideId: rideId);
     await _openSegmentAndListen(rideId);
@@ -144,8 +152,6 @@ class RecorderController extends Notifier<RecorderState> {
     await _repo.finishRide(rideId, now, stats);
     await _repo.setElapsedTime(rideId, state.elapsedTime);
 
-    ref.invalidate(monthlyStatsProvider);
-
     state = state.copyWith(status: RecorderStatus.idle);
   }
 
@@ -159,13 +165,8 @@ class RecorderController extends Notifier<RecorderState> {
 
   void acknowledgeSaved() => _resetLocalState();
 
-  Future<void> deleteRide(int rideId) => _repo.deleteRide(rideId);
-
   Future<void> _openSegmentAndListen(int rideId) async {
-    final now = DateTime.now().toUtc();
-    _segmentId = await _repo.openSegment(rideId, now);
-    _segmentStartedAt = now;
-    _accumulator.startNewSegment();
+    await _openNewSegmentOnly(rideId);
     _pendingPoints.clear();
 
     _positionSub = _location.positions().listen(
@@ -177,10 +178,21 @@ class RecorderController extends Notifier<RecorderState> {
     _flushTimer = Timer.periodic(_flushInterval, (_) => _flush());
   }
 
+  Future<void> _openNewSegmentOnly(int rideId) async {
+    final now = DateTime.now().toUtc();
+    _segmentId = await _repo.openSegment(rideId, now);
+    _segmentStartedAt = now;
+    _accumulator.startNewSegment();
+  }
+
   Future<void> _closeCurrentSegment() async {
     await _positionSub?.cancel();
     _positionSub = null;
     _flushTimer?.cancel();
+    await _closeSegmentOnly();
+  }
+
+  Future<void> _closeSegmentOnly() async {
     await _flush();
 
     final segmentId = _segmentId;
@@ -205,9 +217,18 @@ class RecorderController extends Notifier<RecorderState> {
 
     state = state.copyWith(currentSpeedMps: p.speed, gpsAccuracy: p.accuracy);
 
-    if (!_filter.accepts(sample)) return;
+    if (!_filter.accepts(sample)) {
+      _registerBadSignal();
+      return;
+    }
 
-    _accumulator.addPoint(sample);
+    final outcome = _accumulator.addPoint(sample);
+    if (outcome == PointOutcome.rejectedImplausible) {
+      _registerBadSignal();
+      return;
+    }
+
+    _registerGoodSignal();
     _pendingPoints.add(sample);
 
     final stats = _accumulator.stats;
@@ -217,6 +238,39 @@ class RecorderController extends Notifier<RecorderState> {
       avgSpeedMps: stats.avgSpeedMps,
       maxSpeedMps: stats.maxSpeedMps,
     );
+  }
+
+  void _registerBadSignal() {
+    _goodSince = null;
+    if (state.status != RecorderStatus.recording) return;
+    _badSince ??= DateTime.now();
+    if (DateTime.now().difference(_badSince!) >= _autoPauseAfter) {
+      _badSince = null;
+      _autoPause();
+    }
+  }
+
+  void _registerGoodSignal() {
+    _badSince = null;
+    if (state.status != RecorderStatus.autoPaused) return;
+    _goodSince ??= DateTime.now();
+    if (DateTime.now().difference(_goodSince!) >= _autoResumeAfter) {
+      _goodSince = null;
+      _autoResume();
+    }
+  }
+
+  Future<void> _autoPause() async {
+    await _closeSegmentOnly();
+    _tickTimer?.cancel();
+    state = state.copyWith(status: RecorderStatus.autoPaused);
+  }
+
+  Future<void> _autoResume() async {
+    if (state.status != RecorderStatus.autoPaused) return;
+    state = state.copyWith(status: RecorderStatus.recording);
+    await _openNewSegmentOnly(state.rideId!);
+    _tickTimer = Timer.periodic(_tickInterval, (_) => _tick());
   }
 
   void _tick() {
@@ -243,6 +297,8 @@ class RecorderController extends Notifier<RecorderState> {
     _accumulator.startNewSegment();
     _pendingPoints.clear();
     _elapsedBeforeCurrentSegment = Duration.zero;
+    _badSince = null;
+    _goodSince = null;
     state = const RecorderState();
   }
 
