@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pedali/core/db/app_database.dart';
 import 'package:pedali/core/format.dart';
 import 'package:pedali/core/providers/monthly_stats_provider.dart';
 import 'package:pedali/core/providers/records_provider.dart';
 import 'package:pedali/core/providers/units_provider.dart';
 import 'package:pedali/core/units.dart';
 import 'package:pedali/core/widgets/app_header.dart';
+import 'package:pedali/features/rides/ride_detail_screen.dart';
 
 const _monthNames = [
   '',
@@ -22,6 +24,7 @@ const _monthNames = [
   'Листопад',
   'Грудень',
 ];
+
 String _monthLabel(String key) {
   final parts = key.split('-');
   final month = int.parse(parts[1]);
@@ -49,27 +52,21 @@ class StatsScreen extends ConsumerWidget {
               _RecordCard(
                 icon: Icons.straighten,
                 label: 'Найдовша поїздка',
-                value: records.longest == null
-                    ? '—'
-                    : units.formatDistance(records.longest!.distanceMeters),
+                ride: records.longest,
+                valueBuilder: (r) => units.formatDistance(r.distanceMeters),
               ),
               _RecordCard(
                 icon: Icons.speed,
                 label: 'Найшвидша поїздка',
-                value: records.fastest == null
-                    ? '—'
-                    : units.formatSpeed(records.fastest!.avgSpeedMps),
+                ride: records.fastest,
+                valueBuilder: (r) => units.formatSpeed(r.avgSpeedMps),
               ),
               _RecordCard(
                 icon: Icons.timer,
                 label: 'Найдовша за часом',
-                value: records.longestByTime == null
-                    ? '—'
-                    : formatDuration(
-                        Duration(
-                          milliseconds: records.longestByTime!.movingTimeMs,
-                        ),
-                      ),
+                ride: records.longestByTime,
+                valueBuilder: (r) =>
+                    formatDuration(Duration(milliseconds: r.movingTimeMs)),
               ),
             ],
           ),
@@ -120,21 +117,98 @@ class _RecordCard extends StatelessWidget {
   const _RecordCard({
     required this.icon,
     required this.label,
-    required this.value,
+    required this.ride,
+    required this.valueBuilder,
   });
+
   final IconData icon;
   final String label;
-  final String value;
+  final Ride? ride;
+  final String Function(Ride ride) valueBuilder;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final r = ride;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Icon(icon, color: theme.colorScheme.primary),
-        title: Text(label),
-        trailing: Text(value, style: theme.textTheme.titleMedium),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: r == null
+            ? null
+            : () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RideDetailScreen(rideId: r.id),
+                ),
+              ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+          child: r == null
+              ? Row(
+                  children: [
+                    Icon(icon, color: cs.primary, size: 22),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        label,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const Text('—'),
+                  ],
+                )
+              : Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(icon, color: cs.primary, size: 22),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            label,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const SizedBox(width: 32),
+                        Expanded(
+                          child: Text(
+                            formatStartedAt(r.startedAt),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.textTheme.bodySmall?.color
+                                  ?.withValues(alpha: 0.6),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          valueBuilder(r),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        Icon(
+                          Icons.chevron_right,
+                          size: 20,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }

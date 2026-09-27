@@ -67,11 +67,6 @@ class RideDetailScreen extends ConsumerWidget {
             return const SizedBox.shrink();
           }
 
-          final started = DateTime.fromMillisecondsSinceEpoch(
-            ride.startedAt,
-            isUtc: true,
-          ).toLocal();
-
           final achievements = <String>[];
 
           if (records.longest?.id == ride.id) {
@@ -127,11 +122,10 @@ class RideDetailScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '${started.day.toString().padLeft(2, '0')}.'
-                              '${started.month.toString().padLeft(2, '0')}.'
-                              '${started.year}  '
-                              '${started.hour.toString().padLeft(2, '0')}:'
-                              '${started.minute.toString().padLeft(2, '0')}',
+                              formatStartedAt(
+                                ride.startedAt,
+                                includeTime: true,
+                              ),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: cs.onPrimaryContainer.withValues(
                                   alpha: 0.7,
