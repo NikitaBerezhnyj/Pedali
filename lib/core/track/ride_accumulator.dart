@@ -11,12 +11,14 @@ class RideAccumulator {
     this.movingSpeedThresholdMps = 1,
     this.speedWindowSize = 5,
     this.maxPlausibleSpeedMps = maxPlausibleSpeedMpsDefault,
+    this.minSpeedSamplesForMax = 3,
   });
 
   final double minStepMeters;
   final double movingSpeedThresholdMps;
   final int speedWindowSize;
   final double maxPlausibleSpeedMps;
+  final int minSpeedSamplesForMax;
 
   double _distanceMeters = 0;
   Duration _movingTime = Duration.zero;
@@ -74,7 +76,7 @@ class RideAccumulator {
       _recentSpeeds.removeAt(0);
     }
 
-    if (_recentSpeeds.length == speedWindowSize) {
+    if (_recentSpeeds.length >= minSpeedSamplesForMax) {
       final medianSpeed = _median(_recentSpeeds);
       if (medianSpeed > _maxSpeedMps) {
         _maxSpeedMps = medianSpeed;
@@ -83,6 +85,15 @@ class RideAccumulator {
 
     _last = sample;
     return PointOutcome.accepted;
+  }
+
+  void reset() {
+    _distanceMeters = 0;
+    _movingTime = Duration.zero;
+    _maxSpeedMps = 0;
+    _last = null;
+    _recentSpeeds.clear();
+    _spoofRejectedCount = 0;
   }
 
   RideStats get stats => RideStats(

@@ -113,6 +113,7 @@ class RecorderController extends Notifier<RecorderState> {
       return;
     }
 
+    _accumulator.reset();
     final now = DateTime.now().toUtc();
     final rideId = await _repo.startRide(now);
     _elapsedBeforeCurrentSegment = Duration.zero;
