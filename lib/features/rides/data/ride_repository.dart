@@ -4,26 +4,6 @@ import 'package:pedali/core/db/schema.dart';
 import 'package:pedali/features/rides/domain/ride_stats.dart';
 import 'package:pedali/features/rides/domain/track_sample.dart';
 
-class RideSummary {
-  const RideSummary({
-    required this.id,
-    required this.startedAt,
-    required this.distanceMeters,
-    required this.movingTimeMs,
-    required this.elapsedTimeMs,
-    required this.maxSpeedMps,
-    required this.avgSpeedMps,
-  });
-
-  final int id;
-  final DateTime startedAt;
-  final double distanceMeters;
-  final int movingTimeMs;
-  final int elapsedTimeMs;
-  final double maxSpeedMps;
-  final double avgSpeedMps;
-}
-
 class RideRepository {
   RideRepository(this._db);
 
@@ -162,33 +142,5 @@ class RideRepository {
     return (_db.select(
       _db.rides,
     )..where((r) => r.id.equals(id))).getSingleOrNull();
-  }
-
-  Future<Ride?> longestRide() {
-    return (_db.select(_db.rides)
-          ..where((r) => r.status.equalsValue(RideStatus.finished))
-          ..orderBy([(r) => OrderingTerm.desc(r.distanceMeters)])
-          ..limit(1))
-        .getSingleOrNull();
-  }
-
-  Future<Ride?> fastestRide({double minDistanceMeters = 5000}) {
-    return (_db.select(_db.rides)
-          ..where(
-            (r) =>
-                r.status.equalsValue(RideStatus.finished) &
-                r.distanceMeters.isBiggerOrEqualValue(minDistanceMeters),
-          )
-          ..orderBy([(r) => OrderingTerm.desc(r.avgSpeedMps)])
-          ..limit(1))
-        .getSingleOrNull();
-  }
-
-  Future<Ride?> longestRideByTime() {
-    return (_db.select(_db.rides)
-          ..where((r) => r.status.equalsValue(RideStatus.finished))
-          ..orderBy([(r) => OrderingTerm.desc(r.movingTimeMs)])
-          ..limit(1))
-        .getSingleOrNull();
   }
 }
