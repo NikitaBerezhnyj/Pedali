@@ -1,4 +1,4 @@
-import 'package:pedali/core/constants.dart';
+import 'package:pedali/core/constants/app_constants.dart';
 import 'geo_math.dart';
 import 'ride_stats.dart';
 import 'track_sample.dart';

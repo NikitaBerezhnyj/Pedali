@@ -3,14 +3,14 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pedali/core/db/app_database.dart';
-import 'package:pedali/core/format.dart';
+import 'package:pedali/core/utils/format.dart';
 import 'package:pedali/core/map/tile_provider.dart';
 import 'package:pedali/core/providers/finished_rides_provider.dart';
 import 'package:pedali/core/providers/records_provider.dart';
 import 'package:pedali/core/providers/ride_repository_provider.dart';
 import 'package:pedali/core/providers/track_points_provider.dart';
 import 'package:pedali/core/providers/units_provider.dart';
-import 'package:pedali/core/units.dart';
+import 'package:pedali/core/utils/units.dart';
 import 'package:pedali/core/widgets/app_button.dart';
 import 'package:pedali/core/widgets/app_header.dart';
 

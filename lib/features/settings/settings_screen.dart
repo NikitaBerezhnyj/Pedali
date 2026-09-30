@@ -6,7 +6,7 @@ import 'package:pedali/core/providers/locale_provider.dart';
 import 'package:pedali/core/providers/map_style_provider.dart';
 import 'package:pedali/core/providers/theme_provider.dart';
 import 'package:pedali/core/providers/units_provider.dart';
-import 'package:pedali/core/units.dart';
+import 'package:pedali/core/utils/units.dart';
 import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/l10n/app_localizations.dart';
 

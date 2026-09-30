@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/providers/shared_prefs_provider.dart';
-import 'package:pedali/core/units.dart';
+import 'package:pedali/core/utils/units.dart';
 
 class UnitsNotifier extends Notifier<UnitSystem> {
   @override

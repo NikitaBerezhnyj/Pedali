@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/db/app_database.dart';
-import 'package:pedali/core/format.dart';
+import 'package:pedali/core/utils/format.dart';
 import 'package:pedali/core/providers/monthly_stats_provider.dart';
 import 'package:pedali/core/providers/records_provider.dart';
 import 'package:pedali/core/providers/units_provider.dart';
-import 'package:pedali/core/units.dart';
+import 'package:pedali/core/utils/units.dart';
 import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/features/rides/ride_detail_screen.dart';
 
