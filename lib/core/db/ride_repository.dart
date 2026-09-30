@@ -132,6 +132,32 @@ class RideRepository {
         .get();
   }
 
+  Future<List<RideSegment>> getSegments(int rideId) {
+    return (_db.select(_db.rideSegments)
+          ..where((s) => s.rideId.equals(rideId))
+          ..orderBy([(s) => OrderingTerm.asc(s.startedAt)]))
+        .get();
+  }
+
+  Future<void> closeOrphanedSegments(int rideId) async {
+    final segments = await getSegments(rideId);
+    final points = await getTrackPoints(rideId);
+
+    for (final seg in segments) {
+      if (seg.endedAt != null) continue;
+
+      final segPoints = points.where((p) => p.segmentId == seg.id).toList();
+      final endedAtMs = segPoints.isNotEmpty
+          ? segPoints.last.ts
+          : seg.startedAt;
+
+      await closeSegment(
+        seg.id,
+        DateTime.fromMillisecondsSinceEpoch(endedAtMs, isUtc: true),
+      );
+    }
+  }
+
   Future<Ride?> getRide(int id) {
     return (_db.select(
       _db.rides,

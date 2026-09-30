@@ -29,25 +29,60 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     final controller = ref.read(recorderControllerProvider.notifier);
     final stale = await controller.checkForActiveRide();
     if (stale == null || !mounted) return;
+
+    final info = await controller.getStaleRideInfo(stale);
+    if (!mounted) return;
+
+    final units = ref.read(unitsProvider);
+    final agoText = _formatAgo(
+      DateTime.now().toUtc().difference(info.startedAt),
+    );
+
     final resume = await showDialog<bool>(
       context: context,
+      barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         title: const Text('Незавершена поїздка'),
-        content: const Text(
-          'Схоже, застосунок закрився під час запису. Видалити цей запис?',
+        content: Text(
+          'Схоже, застосунок закрився під час запису.\n\n'
+          'Почата $agoText тому · ${units.formatDistance(info.distanceMeters)}\n\n'
+          'Продовжити цю поїздку чи видалити запис?',
         ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             onPressed: () => Navigator.pop(ctx, false),
             child: const Text('Видалити'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Продовжити'),
           ),
         ],
       ),
     );
-    if (resume == false) {
+
+    if (!mounted) return;
+
+    if (resume == true) {
+      await controller.resumeStaleRide(stale);
+      if (!mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const RecordingScreen()),
+      );
+      ref.invalidate(finishedRidesProvider);
+    } else {
       await controller.discardStaleRide(stale);
       ref.invalidate(finishedRidesProvider);
     }
+  }
+
+  String _formatAgo(Duration d) {
+    if (d.inDays > 0) return '${d.inDays} дн.';
+    if (d.inHours > 0) return '${d.inHours} год';
+    if (d.inMinutes > 0) return '${d.inMinutes} хв';
+    return 'щойно';
   }
 
   Future<void> _openStats() async {

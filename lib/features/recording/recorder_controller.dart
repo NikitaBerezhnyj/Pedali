@@ -13,6 +13,18 @@ import 'package:pedali/core/track/track_sample.dart';
 
 enum RecorderStatus { idle, recording, paused, autoPaused, saving }
 
+class RideRecoveryInfo {
+  const RideRecoveryInfo({
+    required this.distanceMeters,
+    required this.movingTime,
+    required this.startedAt,
+  });
+
+  final double distanceMeters;
+  final Duration movingTime;
+  final DateTime startedAt;
+}
+
 class RecorderState {
   const RecorderState({
     this.status = RecorderStatus.idle,
@@ -111,6 +123,82 @@ class RecorderController extends Notifier<RecorderState> {
   }
 
   Future<Ride?> checkForActiveRide() => _repo.findActiveRide();
+
+  Future<RideRecoveryInfo> getStaleRideInfo(Ride ride) async {
+    final segments = await _repo.getSegments(ride.id);
+    final points = await _repo.getTrackPoints(ride.id);
+
+    final acc = RideAccumulator();
+    for (final seg in segments) {
+      acc.startNewSegment();
+      for (final tp in points.where((p) => p.segmentId == seg.id)) {
+        acc.addPoint(_sampleFromTrackPoint(tp));
+      }
+    }
+
+    return RideRecoveryInfo(
+      distanceMeters: acc.stats.distanceMeters,
+      movingTime: acc.stats.movingTime,
+      startedAt: DateTime.fromMillisecondsSinceEpoch(
+        ride.startedAt,
+        isUtc: true,
+      ),
+    );
+  }
+
+  Future<void> resumeStaleRide(Ride ride) async {
+    final segments = await _repo.getSegments(ride.id);
+    final points = await _repo.getTrackPoints(ride.id);
+
+    _accumulator.reset();
+    final track = <LatLng>[];
+    var elapsedSoFar = Duration.zero;
+
+    for (final seg in segments) {
+      _accumulator.startNewSegment();
+      final segPoints = points.where((p) => p.segmentId == seg.id).toList();
+
+      for (final tp in segPoints) {
+        _accumulator.addPoint(_sampleFromTrackPoint(tp));
+        track.add(LatLng(tp.lat, tp.lon));
+      }
+
+      final endedAtMs =
+          seg.endedAt ??
+          (segPoints.isNotEmpty ? segPoints.last.ts : seg.startedAt);
+      elapsedSoFar += Duration(milliseconds: endedAtMs - seg.startedAt);
+    }
+
+    await _repo.closeOrphanedSegments(ride.id);
+
+    final stats = _accumulator.stats;
+    _elapsedBeforeCurrentSegment = elapsedSoFar;
+    _segmentId = null;
+    _segmentStartedAt = null;
+    _badSince = null;
+    _goodSince = null;
+    _pendingPoints.clear();
+
+    state = RecorderState(
+      status: RecorderStatus.paused,
+      rideId: ride.id,
+      distanceMeters: stats.distanceMeters,
+      movingTime: stats.movingTime,
+      elapsedTime: elapsedSoFar,
+      avgSpeedMps: stats.avgSpeedMps,
+      maxSpeedMps: stats.maxSpeedMps,
+      trackPoints: track,
+      currentPosition: track.isNotEmpty ? track.last : null,
+    );
+  }
+
+  TrackSample _sampleFromTrackPoint(TrackPoint tp) => TrackSample(
+    time: DateTime.fromMillisecondsSinceEpoch(tp.ts, isUtc: true),
+    lat: tp.lat,
+    lon: tp.lon,
+    accuracyMeters: tp.accuracy,
+    speedMps: tp.speedMps,
+  );
 
   Future<void> discardStaleRide(Ride ride) => _repo.deleteRide(ride.id);
 

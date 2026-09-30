@@ -72,7 +72,6 @@ class StatsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
 
-          // monthly залишається без змін
           Text('По місяцях', style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
           monthly.when(
