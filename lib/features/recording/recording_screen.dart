@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pedali/core/map/tile_provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/format.dart';
@@ -8,6 +9,8 @@ import 'package:pedali/core/units.dart';
 import 'package:pedali/core/widgets/app_button.dart';
 import 'package:pedali/core/widgets/app_header.dart';
 import 'recorder_controller.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class RecordingScreen extends ConsumerStatefulWidget {
   const RecordingScreen({super.key});
@@ -106,6 +109,63 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 220,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: FlutterMap(
+                    options: MapOptions(
+                      initialCenter:
+                          s.currentPosition ?? const LatLng(50.45, 30.52),
+                      initialZoom: 15,
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: pedaliTileProvider.urlTemplate,
+                        subdomains: pedaliTileProvider.subdomains,
+                        userAgentPackageName:
+                            pedaliTileProvider.userAgentPackageName,
+                      ),
+                      if (s.trackPoints.length > 1)
+                        PolylineLayer(
+                          polylines: [
+                            Polyline(
+                              points: s.trackPoints,
+                              strokeWidth: 4,
+                              color: cs.primary,
+                            ),
+                          ],
+                        ),
+                      if (s.currentPosition != null)
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: s.currentPosition!,
+                              width: 20,
+                              height: 20,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: cs.primary,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      RichAttributionWidget(
+                        attributions: [
+                          TextSourceAttribution(pedaliTileProvider.attribution),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
               Text(
                 currentSpeed == null

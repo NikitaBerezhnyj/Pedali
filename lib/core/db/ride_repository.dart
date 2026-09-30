@@ -125,6 +125,13 @@ class RideRepository {
         .watch();
   }
 
+  Future<List<TrackPoint>> getTrackPoints(int rideId) {
+    return (_db.select(_db.trackPoints)
+          ..where((t) => t.rideId.equals(rideId))
+          ..orderBy([(t) => OrderingTerm.asc(t.ts)]))
+        .get();
+  }
+
   Future<Ride?> getRide(int id) {
     return (_db.select(
       _db.rides,
@@ -139,7 +146,6 @@ class RideRepository {
         .getSingleOrNull();
   }
 
-  // Мінімальна дистанція, щоб короткий спуск не ставав "найшвидшою поїздкою"
   Future<Ride?> fastestRide({double minDistanceMeters = 5000}) {
     return (_db.select(_db.rides)
           ..where(

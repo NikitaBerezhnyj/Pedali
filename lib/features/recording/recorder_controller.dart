@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:pedali/core/db/app_database.dart';
 import 'package:pedali/core/db/ride_repository.dart';
 import 'package:pedali/core/location/gps_point.dart';
@@ -24,6 +25,8 @@ class RecorderState {
     this.currentSpeedMps,
     this.gpsAccuracy,
     this.message,
+    this.trackPoints = const [],
+    this.currentPosition,
   });
 
   final RecorderStatus status;
@@ -36,6 +39,9 @@ class RecorderState {
   final double? currentSpeedMps;
   final double? gpsAccuracy;
   final String? message;
+
+  final List<LatLng> trackPoints;
+  final LatLng? currentPosition;
 
   bool get isRecording => status == RecorderStatus.recording;
   bool get isManuallyPaused => status == RecorderStatus.paused;
@@ -53,6 +59,8 @@ class RecorderState {
     double? currentSpeedMps,
     double? gpsAccuracy,
     String? message,
+    List<LatLng>? trackPoints,
+    LatLng? currentPosition,
   }) => RecorderState(
     status: status ?? this.status,
     rideId: rideId ?? this.rideId,
@@ -64,6 +72,8 @@ class RecorderState {
     currentSpeedMps: currentSpeedMps ?? this.currentSpeedMps,
     gpsAccuracy: gpsAccuracy ?? this.gpsAccuracy,
     message: message,
+    trackPoints: trackPoints ?? this.trackPoints,
+    currentPosition: currentPosition ?? this.currentPosition,
   );
 }
 
@@ -232,12 +242,17 @@ class RecorderController extends Notifier<RecorderState> {
     _registerGoodSignal();
     _pendingPoints.add(sample);
 
+    final position = LatLng(sample.lat, sample.lon);
+    final updatedTrack = [...state.trackPoints, position];
+
     final stats = _accumulator.stats;
     state = state.copyWith(
       distanceMeters: stats.distanceMeters,
       movingTime: stats.movingTime,
       avgSpeedMps: stats.avgSpeedMps,
       maxSpeedMps: stats.maxSpeedMps,
+      trackPoints: updatedTrack,
+      currentPosition: position,
     );
   }
 

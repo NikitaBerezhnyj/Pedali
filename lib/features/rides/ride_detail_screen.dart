@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:pedali/core/db/app_database.dart';
 import 'package:pedali/core/format.dart';
+import 'package:pedali/core/map/tile_provider.dart';
 import 'package:pedali/core/providers/finished_rides_provider.dart';
 import 'package:pedali/core/providers/records_provider.dart';
 import 'package:pedali/core/providers/ride_repository_provider.dart';
+import 'package:pedali/core/providers/track_points_provider.dart';
 import 'package:pedali/core/providers/units_provider.dart';
 import 'package:pedali/core/units.dart';
 import 'package:pedali/core/widgets/app_button.dart';
@@ -198,6 +202,78 @@ class RideDetailScreen extends ConsumerWidget {
                   icon: Icons.bolt,
                   label: 'Максимальна швидкість',
                   value: units.formatSpeed(ride.maxSpeedMps),
+                ),
+                const SizedBox(height: 16),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final pointsAsync = ref.watch(trackPointsProvider(rideId));
+
+                    return pointsAsync.when(
+                      loading: () => const SizedBox(
+                        height: 200,
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                      error: (e, _) => const SizedBox.shrink(),
+                      data: (points) {
+                        if (points.length < 2) return const SizedBox.shrink();
+
+                        final bySegment = <int, List<LatLng>>{};
+
+                        for (final point in points) {
+                          (bySegment[point.segmentId] ??= []).add(
+                            LatLng(point.lat, point.lon),
+                          );
+                        }
+
+                        final allLatLngs = points
+                            .map((point) => LatLng(point.lat, point.lon))
+                            .toList();
+
+                        final bounds = LatLngBounds.fromPoints(allLatLngs);
+
+                        return SizedBox(
+                          height: 220,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: FlutterMap(
+                              options: MapOptions(
+                                initialCameraFit: CameraFit.bounds(
+                                  bounds: bounds,
+                                  padding: const EdgeInsets.all(24),
+                                ),
+                              ),
+                              children: [
+                                TileLayer(
+                                  urlTemplate: pedaliTileProvider.urlTemplate,
+                                  subdomains: pedaliTileProvider.subdomains,
+                                  userAgentPackageName:
+                                      pedaliTileProvider.userAgentPackageName,
+                                ),
+                                PolylineLayer(
+                                  polylines: bySegment.values
+                                      .map(
+                                        (segment) => Polyline(
+                                          points: segment,
+                                          strokeWidth: 4,
+                                          color: cs.primary,
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                                RichAttributionWidget(
+                                  attributions: [
+                                    TextSourceAttribution(
+                                      pedaliTileProvider.attribution,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),
