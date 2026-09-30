@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pedali/core/track/location_filter.dart';
-import 'package:pedali/core/track/track_sample.dart';
+import 'package:pedali/features/recording/domain/location_filter.dart';
+import 'package:pedali/features/rides/domain/track_sample.dart';
 
 void main() {
   const filter = LocationFilter();

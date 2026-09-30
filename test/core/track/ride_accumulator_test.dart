@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pedali/core/track/ride_accumulator.dart';
-import 'package:pedali/core/track/track_sample.dart';
+import 'package:pedali/features/recording/domain/ride_accumulator.dart';
+import 'package:pedali/features/rides/domain/track_sample.dart';
 
 void main() {
   final t0 = DateTime.utc(2026, 9, 26, 10, 0, 0);
