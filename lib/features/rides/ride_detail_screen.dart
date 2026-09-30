@@ -60,6 +60,7 @@ class RideDetailScreen extends ConsumerWidget {
     final rideAsync = ref.watch(rideProvider(rideId));
     final records = ref.watch(recordsProvider);
     final units = ref.watch(unitsProvider);
+    final tileProvider = mapStyleTiles[MapStyle.cycling]!;
 
     return Scaffold(
       appBar: const AppHeader(title: 'Деталі поїздки', showBackButton: true),
@@ -210,12 +211,23 @@ class RideDetailScreen extends ConsumerWidget {
 
                     return pointsAsync.when(
                       loading: () => const SizedBox(
-                        height: 200,
+                        height: 220,
                         child: Center(child: CircularProgressIndicator()),
                       ),
-                      error: (e, _) => const SizedBox.shrink(),
+                      error: (e, _) => _MapPlaceholder(
+                        text: 'Не вдалося завантажити маршрут',
+                      ),
                       data: (points) {
-                        if (points.length < 2) return const SizedBox.shrink();
+                        if (points.isEmpty) {
+                          return const _MapPlaceholder(
+                            text: 'Для цієї поїздки не збережено GPS-точок',
+                          );
+                        }
+                        if (points.length < 2) {
+                          return const _MapPlaceholder(
+                            text: 'Замало точок, щоб намалювати маршрут',
+                          );
+                        }
 
                         final bySegment = <int, List<LatLng>>{};
 
@@ -244,10 +256,10 @@ class RideDetailScreen extends ConsumerWidget {
                               ),
                               children: [
                                 TileLayer(
-                                  urlTemplate: pedaliTileProvider.urlTemplate,
-                                  subdomains: pedaliTileProvider.subdomains,
+                                  urlTemplate: tileProvider.urlTemplate,
+                                  subdomains: tileProvider.subdomains,
                                   userAgentPackageName:
-                                      pedaliTileProvider.userAgentPackageName,
+                                      tileProvider.userAgentPackageName,
                                 ),
                                 PolylineLayer(
                                   polylines: bySegment.values
@@ -263,7 +275,7 @@ class RideDetailScreen extends ConsumerWidget {
                                 RichAttributionWidget(
                                   attributions: [
                                     TextSourceAttribution(
-                                      pedaliTileProvider.attribution,
+                                      tileProvider.attribution,
                                     ),
                                   ],
                                 ),
@@ -369,6 +381,24 @@ class _StatRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _MapPlaceholder extends StatelessWidget {
+  const _MapPlaceholder({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 220,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
     );
   }
 }

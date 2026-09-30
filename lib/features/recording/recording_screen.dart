@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pedali/core/map/tile_provider.dart';
+import 'package:pedali/core/providers/map_style_provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/format.dart';
 import 'package:pedali/core/providers/units_provider.dart';
 import 'package:pedali/core/providers/keep_screen_on_provider.dart';
 import 'package:pedali/core/units.dart';
-import 'package:pedali/core/widgets/app_button.dart';
-import 'package:pedali/core/widgets/app_header.dart';
 import 'recorder_controller.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -20,6 +18,14 @@ class RecordingScreen extends ConsumerStatefulWidget {
 }
 
 class _RecordingScreenState extends ConsumerState<RecordingScreen> {
+  final _mapController = MapController();
+  final _sheetController = DraggableScrollableController();
+  bool _followMe = true;
+
+  static const _sheetMin = 0.10;
+  static const _sheetInitial = 0.30;
+  static const _sheetMax = 0.30;
+
   @override
   void initState() {
     super.initState();
@@ -30,8 +36,15 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
 
   @override
   void dispose() {
+    _sheetController.dispose();
     WakelockPlus.disable();
     super.dispose();
+  }
+
+  void _recenter(LatLng? position) {
+    if (position == null) return;
+    setState(() => _followMe = true);
+    _mapController.move(position, _mapController.camera.zoom);
   }
 
   Future<void> _confirmStop(BuildContext context, WidgetRef ref) async {
@@ -99,206 +112,319 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
     final s = ref.watch(recorderControllerProvider);
     final c = ref.read(recorderControllerProvider.notifier);
     final units = ref.watch(unitsProvider);
+    final tileConfig = ref.watch(activeMapStyleProvider);
 
-    final currentSpeed = s.currentSpeedMps;
+    ref.listen(recorderControllerProvider, (previous, next) {
+      if (_followMe && next.currentPosition != null) {
+        _mapController.move(next.currentPosition!, _mapController.camera.zoom);
+      }
+    });
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    const gapAboveSheet = 16.0;
 
     return Scaffold(
-      appBar: const AppHeader(title: 'Поїздка'),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: s.currentPosition ?? const LatLng(50.45, 30.52),
+              initialZoom: 16,
+              onPositionChanged: (position, hasGesture) {
+                if (hasGesture && _followMe) {
+                  setState(() => _followMe = false);
+                }
+              },
+            ),
             children: [
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 220,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: FlutterMap(
-                    options: MapOptions(
-                      initialCenter:
-                          s.currentPosition ?? const LatLng(50.45, 30.52),
-                      initialZoom: 15,
+              TileLayer(
+                urlTemplate: tileConfig.urlTemplate,
+                subdomains: tileConfig.subdomains,
+                userAgentPackageName: tileConfig.userAgentPackageName,
+              ),
+              if (s.trackPoints.length > 1)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: s.trackPoints,
+                      strokeWidth: 4,
+                      color: cs.primary,
                     ),
-                    children: [
-                      TileLayer(
-                        urlTemplate: pedaliTileProvider.urlTemplate,
-                        subdomains: pedaliTileProvider.subdomains,
-                        userAgentPackageName:
-                            pedaliTileProvider.userAgentPackageName,
-                      ),
-                      if (s.trackPoints.length > 1)
-                        PolylineLayer(
-                          polylines: [
-                            Polyline(
-                              points: s.trackPoints,
-                              strokeWidth: 4,
-                              color: cs.primary,
-                            ),
+                  ],
+                ),
+              if (s.currentPosition != null)
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: s.currentPosition!,
+                      width: 22,
+                      height: 22,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: cs.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 3),
+                          boxShadow: const [
+                            BoxShadow(color: Colors.black26, blurRadius: 4),
                           ],
                         ),
-                      if (s.currentPosition != null)
-                        MarkerLayer(
-                          markers: [
-                            Marker(
-                              point: s.currentPosition!,
-                              width: 20,
-                              height: 20,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: cs.primary,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
+                      ),
+                    ),
+                  ],
+                ),
+              RichAttributionWidget(
+                attributions: [TextSourceAttribution(tileConfig.attribution)],
+              ),
+            ],
+          ),
+
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            left: 12,
+            child: _RoundIconButton(
+              icon: Icons.arrow_back,
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+
+          if (!_followMe)
+            AnimatedBuilder(
+              animation: _sheetController,
+              builder: (context, child) {
+                final sheetExtent = _sheetController.isAttached
+                    ? _sheetController.size
+                    : _sheetInitial;
+                return Positioned(
+                  right: 12,
+                  bottom: screenHeight * sheetExtent + gapAboveSheet,
+                  child: child!,
+                );
+              },
+
+              child: _RoundIconButton(
+                icon: Icons.my_location,
+                onPressed: () => _recenter(s.currentPosition),
+              ),
+            ),
+
+          DraggableScrollableSheet(
+            controller: _sheetController,
+            initialChildSize: _sheetInitial,
+            minChildSize: _sheetMin,
+            maxChildSize: _sheetMax,
+            snap: true,
+            snapSizes: const [_sheetMin, _sheetInitial],
+            builder: (context, scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: cs.surface,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(24),
+                  ),
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black26, blurRadius: 12),
+                  ],
+                ),
+                child: ListView(
+                  controller: scrollController,
+                  padding: EdgeInsets.fromLTRB(
+                    20,
+                    8,
+                    20,
+                    MediaQuery.of(context).padding.bottom + 16,
+                  ),
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 36,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: cs.outlineVariant,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          s.currentSpeedMps == null
+                              ? '--'
+                              : units
+                                    .formatSpeed(s.currentSpeedMps!)
+                                    .split(' ')
+                                    .first,
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          units == UnitSystem.imperial ? 'mph' : 'km/h',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                        const Spacer(),
+                        if (s.status == RecorderStatus.recording) ...[
+                          _CircleActionButton(
+                            icon: Icons.pause,
+                            onPressed: c.pause,
+                          ),
+                          const SizedBox(width: 8),
+                          _CircleActionButton(
+                            icon: Icons.stop,
+                            color: cs.error,
+                            onPressed: () => _confirmStop(context, ref),
+                          ),
+                        ] else if (s.status == RecorderStatus.paused) ...[
+                          _CircleActionButton(
+                            icon: Icons.play_arrow,
+                            onPressed: c.resume,
+                          ),
+                          const SizedBox(width: 8),
+                          _CircleActionButton(
+                            icon: Icons.stop,
+                            color: cs.error,
+                            onPressed: () => _confirmStop(context, ref),
+                          ),
+                        ] else if (s.status == RecorderStatus.autoPaused)
+                          _CircleActionButton(
+                            icon: Icons.stop,
+                            color: cs.error,
+                            onPressed: () => _confirmStop(context, ref),
+                          ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          units.formatDistance(s.distanceMeters),
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text('дистанція', style: theme.textTheme.bodySmall),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _MiniStat('Час у русі', formatDuration(s.movingTime)),
+                        _MiniStat('Заг. час', formatDuration(s.elapsedTime)),
+                        _MiniStat(
+                          'Сер. швидк.',
+                          units.formatSpeed(s.avgSpeedMps),
+                        ),
+                        _MiniStat('Макс.', units.formatSpeed(s.maxSpeedMps)),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    if (s.status == RecorderStatus.autoPaused)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: cs.errorContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.gps_off,
+                              color: cs.onErrorContainer,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'GPS нестабільний — запис призупинено',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: cs.onErrorContainer,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                      RichAttributionWidget(
-                        attributions: [
-                          TextSourceAttribution(pedaliTileProvider.attribution),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                currentSpeed == null
-                    ? '--'
-                    : units.formatSpeed(currentSpeed).split(' ').first,
-                style: theme.textTheme.displayLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 72,
-                ),
-              ),
-              Text(
-                currentSpeed == null
-                    ? 'Пошук сигналу'
-                    : units == UnitSystem.imperial
-                    ? 'mph'
-                    : 'km/h',
-                style: theme.textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                units.formatDistance(s.distanceMeters),
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text('Дистанція', style: theme.textTheme.bodySmall),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _Stat(
-                    label: 'Час у русі',
-                    value: formatDuration(s.movingTime),
-                  ),
-                  _Stat(
-                    label: 'Заг. час',
-                    value: formatDuration(s.elapsedTime),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _Stat(
-                    label: 'Сер. швидкість',
-                    value: units.formatSpeed(s.avgSpeedMps),
-                  ),
-                  _Stat(
-                    label: 'Макс. швидкість',
-                    value: units.formatSpeed(s.maxSpeedMps),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                s.gpsAccuracy == null
-                    ? 'GPS: пошук сигналу'
-                    : 'GPS: ±${s.gpsAccuracy!.toStringAsFixed(0)} м',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: (s.gpsAccuracy ?? 999) <= 20
-                      ? Colors.green
-                      : Colors.orange,
-                ),
-              ),
-              if (s.message != null) ...[
-                const SizedBox(height: 8),
-                Text(s.message!, style: const TextStyle(color: Colors.red)),
-              ],
-              const Spacer(),
-              if (s.status == RecorderStatus.autoPaused) ...[
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: cs.errorContainer,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.gps_off, color: cs.onErrorContainer),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'GPS нестабільний — запис призупинено автоматично',
-                          style: TextStyle(color: cs.onErrorContainer),
+                      )
+                    else
+                      Text(
+                        s.gpsAccuracy == null
+                            ? 'GPS: пошук сигналу'
+                            : 'GPS: ±${s.gpsAccuracy!.toStringAsFixed(0)} м',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: (s.gpsAccuracy ?? 999) <= 20
+                              ? Colors.green
+                              : Colors.orange,
                         ),
                       ),
+                    if (s.message != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        s.message!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
                     ],
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlineButton(
-                    label: 'Стоп',
-                    color: cs.error,
-                    onPressed: () => _confirmStop(context, ref),
-                  ),
-                ),
-              ] else if (s.status == RecorderStatus.recording) ...[
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlineButton(label: 'Пауза', onPressed: c.pause),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: PrimaryButton(
-                    label: 'Стоп',
-                    color: cs.error,
-                    onPressed: () => _confirmStop(context, ref),
-                  ),
-                ),
-              ] else if (s.status == RecorderStatus.paused) ...[
-                SizedBox(
-                  width: double.infinity,
-                  child: PrimaryButton(
-                    label: 'Продовжити',
-                    onPressed: c.resume,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlineButton(
-                    label: 'Стоп',
-                    color: cs.error,
-                    onPressed: () => _confirmStop(context, ref),
-                  ),
-                ),
-              ],
-            ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RoundIconButton extends StatelessWidget {
+  const _RoundIconButton({required this.icon, required this.onPressed});
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Theme.of(context).colorScheme.surface,
+      shape: const CircleBorder(),
+      elevation: 3,
+      child: IconButton(icon: Icon(icon), onPressed: onPressed),
+    );
+  }
+}
+
+class _CircleActionButton extends StatelessWidget {
+  const _CircleActionButton({
+    required this.icon,
+    required this.onPressed,
+    this.color,
+  });
+
+  final IconData icon;
+  final VoidCallback onPressed;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Material(
+      color: color ?? cs.primaryContainer,
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Icon(
+            icon,
+            color: color != null ? Colors.white : cs.onPrimaryContainer,
           ),
         ),
       ),
@@ -306,8 +432,8 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
   }
 }
 
-class _Stat extends StatelessWidget {
-  const _Stat({required this.label, required this.value});
+class _MiniStat extends StatelessWidget {
+  const _MiniStat(this.label, this.value);
 
   final String label;
   final String value;
@@ -319,7 +445,7 @@ class _Stat extends StatelessWidget {
       children: [
         Text(
           value,
-          style: theme.textTheme.headlineSmall?.copyWith(
+          style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),

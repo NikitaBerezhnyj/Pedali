@@ -1,4 +1,4 @@
-// lib/core/map/tile_provider.dart
+enum MapStyle { cycling, terrain, satellite }
 
 class TileProviderConfig {
   const TileProviderConfig({
@@ -14,9 +14,33 @@ class TileProviderConfig {
   final String userAgentPackageName;
 }
 
-const pedaliTileProvider = TileProviderConfig(
+const _cycling = TileProviderConfig(
   urlTemplate:
       'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
   attribution: '© OpenStreetMap contributors, CyclOSM',
   subdomains: ['a', 'b', 'c'],
 );
+
+const _terrain = TileProviderConfig(
+  urlTemplate: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+  attribution: '© OpenStreetMap contributors, SRTM, OpenTopoMap',
+  subdomains: ['a', 'b', 'c'],
+);
+
+const _satellite = TileProviderConfig(
+  urlTemplate:
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  attribution: 'Esri, Maxar, Earthstar Geographics',
+);
+
+const mapStyleTiles = {
+  MapStyle.cycling: _cycling,
+  MapStyle.terrain: _terrain,
+  MapStyle.satellite: _satellite,
+};
+
+const mapStyleLabels = {
+  MapStyle.cycling: 'Вело',
+  MapStyle.terrain: 'Рельєф',
+  MapStyle.satellite: 'Супутник',
+};
