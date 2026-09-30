@@ -6,7 +6,7 @@ void main() {
   const filter = LocationFilter();
   final base = DateTime.utc(2026, 9, 26, 10, 0, 0);
 
-  TrackSample sample({double accuracy = 5, double? speed}) => TrackSample(
+  GPSTrackPoint sample({double accuracy = 5, double? speed}) => GPSTrackPoint(
     time: base,
     lat: 50.45,
     lon: 30.52,

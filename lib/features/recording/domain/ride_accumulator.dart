@@ -24,7 +24,7 @@ class RideAccumulator {
   Duration _movingTime = Duration.zero;
   double _maxSpeedMps = 0;
 
-  TrackSample? _last;
+  GPSTrackPoint? _last;
   final List<double> _recentSpeeds = [];
 
   int _spoofRejectedCount = 0;
@@ -34,7 +34,7 @@ class RideAccumulator {
     _last = null;
   }
 
-  PointOutcome addPoint(TrackSample sample) {
+  PointOutcome addPoint(GPSTrackPoint sample) {
     final last = _last;
     if (last == null) {
       _last = sample;

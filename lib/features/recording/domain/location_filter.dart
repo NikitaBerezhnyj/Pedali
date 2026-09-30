@@ -1,5 +1,5 @@
 import 'package:pedali/core/constants/app_constants.dart';
-import '../../rides/domain/track_sample.dart';
+import 'package:pedali/features/rides/domain/track_sample.dart';
 
 class LocationFilter {
   const LocationFilter({
@@ -10,7 +10,7 @@ class LocationFilter {
   final double maxAccuracyMeters;
   final double maxSpeedMps;
 
-  bool accepts(TrackSample sample) {
+  bool accepts(GPSTrackPoint sample) {
     if (sample.accuracyMeters > maxAccuracyMeters) return false;
 
     final speed = sample.speedMps;

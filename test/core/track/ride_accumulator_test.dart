@@ -6,8 +6,8 @@ void main() {
   final t0 = DateTime.utc(2026, 9, 26, 10, 0, 0);
   DateTime at(int seconds) => t0.add(Duration(seconds: seconds));
 
-  TrackSample p(int seconds, double lat, double lon, {double? speedMps}) =>
-      TrackSample(
+  GPSTrackPoint p(int seconds, double lat, double lon, {double? speedMps}) =>
+      GPSTrackPoint(
         time: at(seconds),
         lat: lat,
         lon: lon,

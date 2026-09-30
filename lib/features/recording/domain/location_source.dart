@@ -1,6 +1,6 @@
-import 'gps_point.dart';
+import 'package:pedali/features/rides/domain/track_sample.dart';
 
 abstract interface class LocationSource {
   Future<bool> ensurePermissions();
-  Stream<GpsPoint> positions();
+  Stream<GPSTrackPoint> positions();
 }

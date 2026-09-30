@@ -5,7 +5,6 @@ import 'package:pedali/core/db/app_database.dart';
 import 'package:pedali/features/recording/domain/recorder_state.dart';
 import 'package:pedali/features/recording/domain/ride_recovery_info.dart';
 import 'package:pedali/features/rides/data/ride_repository.dart';
-import 'package:pedali/features/recording/domain/gps_point.dart';
 import 'package:pedali/features/recording/domain/location_source.dart';
 import 'package:pedali/features/recording/providers/location_source_provider.dart';
 import 'package:pedali/features/recording/domain/location_filter.dart';
@@ -22,13 +21,13 @@ const _autoPauseAfter = Duration(seconds: 20);
 const _autoResumeAfter = Duration(seconds: 4);
 
 class RecorderController extends Notifier<RecorderState> {
-  StreamSubscription<GpsPoint>? _positionSub;
+  StreamSubscription<GPSTrackPoint>? _positionSub;
   Timer? _flushTimer;
   Timer? _tickTimer;
 
   final _accumulator = RideAccumulator();
   final _filter = const LocationFilter();
-  final _pendingPoints = <TrackSample>[];
+  final _pendingPoints = <GPSTrackPoint>[];
 
   int? _segmentId;
   DateTime? _segmentStartedAt;
@@ -116,7 +115,7 @@ class RecorderController extends Notifier<RecorderState> {
     );
   }
 
-  TrackSample _sampleFromTrackPoint(TrackPoint tp) => TrackSample(
+  GPSTrackPoint _sampleFromTrackPoint(TrackPoint tp) => GPSTrackPoint(
     time: DateTime.fromMillisecondsSinceEpoch(tp.ts, isUtc: true),
     lat: tp.lat,
     lon: tp.lon,
@@ -229,16 +228,19 @@ class RecorderController extends Notifier<RecorderState> {
     _segmentStartedAt = null;
   }
 
-  void _onPoint(GpsPoint p) {
-    final sample = TrackSample(
+  void _onPoint(GPSTrackPoint p) {
+    final sample = GPSTrackPoint(
       time: p.time,
       lat: p.lat,
       lon: p.lon,
-      accuracyMeters: p.accuracy,
-      speedMps: p.speed,
+      accuracyMeters: p.accuracyMeters,
+      speedMps: p.speedMps,
     );
 
-    state = state.copyWith(currentSpeedMps: p.speed, gpsAccuracy: p.accuracy);
+    state = state.copyWith(
+      currentSpeedMps: p.speedMps,
+      gpsAccuracy: p.accuracyMeters,
+    );
 
     if (!_filter.accepts(sample)) {
       _registerBadSignal();
@@ -316,7 +318,7 @@ class RecorderController extends Notifier<RecorderState> {
     final segmentId = _segmentId;
     if (rideId == null || segmentId == null) return;
 
-    final toSave = List<TrackSample>.from(_pendingPoints);
+    final toSave = List<GPSTrackPoint>.from(_pendingPoints);
     _pendingPoints.clear();
     await _repo.insertPoints(rideId, segmentId, toSave);
   }

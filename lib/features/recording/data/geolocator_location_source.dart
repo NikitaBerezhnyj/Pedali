@@ -1,8 +1,7 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:pedali/features/recording/domain/location_source.dart';
+import 'package:pedali/features/rides/domain/track_sample.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import '../domain/gps_point.dart';
-import '../domain/location_source.dart';
 
 class GeolocatorLocationSource implements LocationSource {
   @override
@@ -23,7 +22,7 @@ class GeolocatorLocationSource implements LocationSource {
   }
 
   @override
-  Stream<GpsPoint> positions() {
+  Stream<GPSTrackPoint> positions() {
     final settings = AndroidSettings(
       accuracy: LocationAccuracy.best,
       distanceFilter: 3,
@@ -41,12 +40,12 @@ class GeolocatorLocationSource implements LocationSource {
     ).map(_toPoint);
   }
 
-  GpsPoint _toPoint(Position p) => GpsPoint(
+  GPSTrackPoint _toPoint(Position p) => GPSTrackPoint(
     time: p.timestamp.toUtc(),
     lat: p.latitude,
     lon: p.longitude,
-    accuracy: p.accuracy,
-    altitude: p.altitude,
-    speed: p.speed < 0 ? null : p.speed,
+    accuracyMeters: p.accuracy,
+    altitudeMeters: p.altitude,
+    speedMps: p.speed < 0 ? null : p.speed,
   );
 }

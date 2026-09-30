@@ -42,7 +42,7 @@ class RideRepository {
   Future<void> insertPoints(
     int rideId,
     int segmentId,
-    List<TrackSample> samples,
+    List<GPSTrackPoint> samples,
   ) async {
     if (samples.isEmpty) return;
     await _db.batch((batch) {
