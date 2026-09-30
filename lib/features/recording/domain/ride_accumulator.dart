@@ -1,7 +1,7 @@
 import 'package:pedali/core/constants/app_constants.dart';
 import 'geo_math.dart';
 import '../../rides/domain/ride_stats.dart';
-import '../../rides/domain/track_sample.dart';
+import '../../rides/domain/gps_track_oint.dart';
 
 enum PointOutcome { accepted, ignoredStationary, rejectedImplausible }
 

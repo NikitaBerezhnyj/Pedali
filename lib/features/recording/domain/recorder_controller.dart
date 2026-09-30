@@ -9,7 +9,7 @@ import 'package:pedali/features/recording/domain/location_source.dart';
 import 'package:pedali/features/recording/providers/location_source_provider.dart';
 import 'package:pedali/features/recording/domain/location_filter.dart';
 import 'package:pedali/features/recording/domain/ride_accumulator.dart';
-import 'package:pedali/features/rides/domain/track_sample.dart';
+import 'package:pedali/features/rides/domain/gps_track_oint.dart';
 import 'package:pedali/features/rides/providers/ride_repository_provider.dart';
 
 const _minSavableDistanceMeters = 100.0;

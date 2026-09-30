@@ -1,5 +1,5 @@
 import 'package:pedali/core/constants/app_constants.dart';
-import 'package:pedali/features/rides/domain/track_sample.dart';
+import 'package:pedali/features/rides/domain/gps_track_oint.dart';
 
 class LocationFilter {
   const LocationFilter({
