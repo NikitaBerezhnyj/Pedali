@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/features/map/domain/tile_config.dart';
 import 'package:pedali/features/map/providers/map_style_provider.dart';
+import 'package:pedali/features/map/providers/map_tile_provider.dart';
 
 class AppTileLayer extends ConsumerWidget {
   const AppTileLayer({super.key, this.config});
@@ -17,6 +18,7 @@ class AppTileLayer extends ConsumerWidget {
       urlTemplate: tileConfig.urlTemplate,
       subdomains: tileConfig.subdomains,
       userAgentPackageName: tileConfig.userAgentPackageName,
+      tileProvider: mapTileProvider,
     );
   }
 }
