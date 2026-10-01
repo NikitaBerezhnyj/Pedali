@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/utils/format.dart';
+import 'package:pedali/core/widgets/empty_state.dart';
 import 'package:pedali/features/recording/providers/recorder_controller_provider.dart';
 import 'package:pedali/features/rides/providers/finished_rides_provider.dart';
 import 'package:pedali/features/rides/widgets/ride_card.dart';
@@ -112,7 +113,6 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final units = ref.watch(unitsProvider);
     final ridesAsync = ref.watch(finishedRidesProvider);
     return Scaffold(
@@ -127,43 +127,11 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
         error: (e, _) => Center(child: Text('Помилка: $e')),
         data: (rides) {
           if (rides.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 88,
-                      height: 88,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.directions_bike,
-                        size: 44,
-                        color: theme.colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Час вирушати',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Запиши свою першу поїздку, і вона зʼявиться тут.',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+            return const Center(
+              child: EmptyState(
+                icon: Icons.directions_bike,
+                title: 'Час вирушати',
+                description: 'Запиши свою першу поїздку, і вона зʼявиться тут.',
               ),
             );
           }

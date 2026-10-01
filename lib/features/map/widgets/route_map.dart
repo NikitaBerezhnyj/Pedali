@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:pedali/core/widgets/empty_state.dart';
 import 'package:pedali/features/map/widgets/app_tile_layer.dart';
 
 class RoutePolylineLayer extends StatelessWidget {
@@ -46,34 +47,14 @@ class RouteMap extends StatelessWidget {
           color: theme.colorScheme.surfaceContainerLow,
         ),
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.route_outlined,
-                  size: 52,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Маршрут ще не видно',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'У цій поїздці замало GPS-точок для відображення маршруту.',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+          child: EmptyState(
+            icon: Icons.route_outlined,
+            title: 'Маршрут ще не видно',
+            description:
+                'У цій поїздці замало GPS-точок для відображення маршруту.',
+            iconColor: theme.colorScheme.primary,
+            showIconBackground: false,
+            iconSize: 52,
           ),
         ),
       );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/utils/format.dart';
+import 'package:pedali/core/widgets/empty_state.dart';
 import 'package:pedali/features/stats/providers/monthly_stats_provider.dart';
 import 'package:pedali/features/rides/providers/records_provider.dart';
 import 'package:pedali/features/settings/providers/units_provider.dart';
@@ -48,7 +49,14 @@ class StatsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: const AppHeader(title: 'Статистика', showBackButton: true),
       body: !hasStats
-          ? const _EmptyStats()
+          ? const Center(
+              child: EmptyState(
+                icon: Icons.emoji_events_outlined,
+                title: 'Тут будуть твої рекорди',
+                description:
+                    'Запиши свою першу поїздку, щоб почати збирати статистику.',
+              ),
+            )
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
@@ -109,55 +117,6 @@ class StatsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-    );
-  }
-}
-
-class _EmptyStats extends StatelessWidget {
-  const _EmptyStats();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 88,
-              height: 88,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.emoji_events_outlined,
-                size: 44,
-                color: theme.colorScheme.onPrimaryContainer,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Тут будуть твої рекорди',
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Запиши свою першу поїздку, щоб почати збирати статистику.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
