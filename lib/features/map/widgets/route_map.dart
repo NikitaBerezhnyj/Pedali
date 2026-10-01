@@ -35,9 +35,54 @@ class RouteMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final all = segments.expand((s) => s).toList();
-    assert(all.length >= 2, 'RouteMap потребує щонайменше 2 точки');
+    final points = segments.expand((s) => s).toList();
+    final theme = Theme.of(context);
 
+    if (points.length < 2) {
+      return Container(
+        height: height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: theme.colorScheme.surfaceContainerLow,
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.route_outlined,
+                  size: 52,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Маршрут ще не видно',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'У цій поїздці замало GPS-точок для відображення маршруту.',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return _buildMap(context, points);
+  }
+
+  Widget _buildMap(BuildContext context, List<LatLng> points) {
     return SizedBox(
       height: height,
       child: ClipRRect(
@@ -45,7 +90,7 @@ class RouteMap extends StatelessWidget {
         child: FlutterMap(
           options: MapOptions(
             initialCameraFit: CameraFit.bounds(
-              bounds: LatLngBounds.fromPoints(all),
+              bounds: LatLngBounds.fromPoints(points),
               padding: const EdgeInsets.all(24),
               maxZoom: 17,
             ),
