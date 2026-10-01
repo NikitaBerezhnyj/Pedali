@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pedali/core/utils/format.dart';
+import 'package:pedali/features/map/utils/route_simplifier.dart';
 import 'package:pedali/features/map/widgets/route_map.dart';
 import 'package:pedali/features/rides/providers/finished_rides_provider.dart';
 import 'package:pedali/features/rides/providers/records_provider.dart';
@@ -168,18 +169,6 @@ class RideDetailScreen extends ConsumerWidget {
                         text: 'Не вдалося завантажити маршрут',
                       ),
                       data: (points) {
-                        if (points.isEmpty) {
-                          return const _MapPlaceholder(
-                            text: 'Для цієї поїздки не збережено GPS-точок',
-                          );
-                        }
-
-                        if (points.length < 2) {
-                          return const _MapPlaceholder(
-                            text: 'Замало точок, щоб намалювати маршрут',
-                          );
-                        }
-
                         final bySegment = <int, List<LatLng>>{};
 
                         for (final point in points) {
@@ -188,7 +177,19 @@ class RideDetailScreen extends ConsumerWidget {
                           );
                         }
 
-                        return RouteMap(segments: bySegment.values.toList());
+                        final simplifier = const RouteSimplifier();
+
+                        final simplifiedSegments = bySegment.values
+                            .map(
+                              (segment) => simplifier.simplify(
+                                segment,
+                                toleranceMeters: 5,
+                              ),
+                            )
+                            .where((segment) => segment.length >= 2)
+                            .toList();
+
+                        return RouteMap(segments: simplifiedSegments);
                       },
                     );
                   },
