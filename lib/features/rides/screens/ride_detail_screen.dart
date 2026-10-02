@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pedali/core/utils/format.dart';
 import 'package:pedali/features/map/utils/route_simplifier.dart';
+import 'package:pedali/features/map/widgets/route_fullscreen_screen.dart';
 import 'package:pedali/features/map/widgets/route_map.dart';
 import 'package:pedali/features/rides/providers/finished_rides_provider.dart';
 import 'package:pedali/features/rides/providers/records_provider.dart';
@@ -189,7 +190,13 @@ class RideDetailScreen extends ConsumerWidget {
                             .where((segment) => segment.length >= 2)
                             .toList();
 
-                        return RouteMap(segments: simplifiedSegments);
+                        return RouteMap(
+                          segments: simplifiedSegments,
+                          onExpand: () => Navigator.push(
+                            context,
+                            RouteFullscreenScreen.route(simplifiedSegments),
+                          ),
+                        );
                       },
                     );
                   },
