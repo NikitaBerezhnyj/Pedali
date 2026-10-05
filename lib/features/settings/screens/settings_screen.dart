@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/utils/units.dart';
 import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/features/map/domain/map_style.dart';
-import 'package:pedali/features/map/domain/tile_config.dart';
 import 'package:pedali/features/settings/providers/keep_screen_on_provider.dart';
 import 'package:pedali/features/settings/providers/locale_provider.dart';
 import 'package:pedali/features/settings/providers/theme_provider.dart';
@@ -98,7 +97,11 @@ class SettingsScreen extends ConsumerWidget {
                   .map(
                     (style) => DropdownMenuItem(
                       value: style,
-                      child: Text(mapStyleLabels[style]!),
+                      child: Text(switch (style) {
+                        MapStyle.cycling => t.mapStyleCycling,
+                        MapStyle.terrain => t.mapStyleTerrain,
+                        MapStyle.satellite => t.mapStyleSatellite,
+                      }),
                     ),
                   )
                   .toList(),

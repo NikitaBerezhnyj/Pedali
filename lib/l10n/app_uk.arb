@@ -126,5 +126,9 @@
   "kilometerUnit": "км",
   "mileUnit": "миль",
   "kilometersPerHourUnit": "км/год",
-  "milesPerHourUnit": "миль/год"
+  "milesPerHourUnit": "миль/год",
+
+  "mapStyleCycling": "Вело",
+  "mapStyleTerrain": "Рельєф",
+  "mapStyleSatellite": "Супутник"
 }

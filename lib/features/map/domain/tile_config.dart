@@ -38,9 +38,3 @@ const Map<MapStyle, TileProviderConfig> mapStyleTiles = {
   MapStyle.terrain: _terrain,
   MapStyle.satellite: _satellite,
 };
-
-const mapStyleLabels = {
-  MapStyle.cycling: 'Вело',
-  MapStyle.terrain: 'Рельєф',
-  MapStyle.satellite: 'Супутник',
-};

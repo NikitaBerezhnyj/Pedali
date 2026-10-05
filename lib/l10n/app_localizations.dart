@@ -656,6 +656,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'mph'**
   String get milesPerHourUnit;
+
+  /// No description provided for @mapStyleCycling.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycling'**
+  String get mapStyleCycling;
+
+  /// No description provided for @mapStyleTerrain.
+  ///
+  /// In en, this message translates to:
+  /// **'Terrain'**
+  String get mapStyleTerrain;
+
+  /// No description provided for @mapStyleSatellite.
+  ///
+  /// In en, this message translates to:
+  /// **'Satellite'**
+  String get mapStyleSatellite;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

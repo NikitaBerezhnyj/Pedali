@@ -330,4 +330,13 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get milesPerHourUnit => 'миль/год';
+
+  @override
+  String get mapStyleCycling => 'Вело';
+
+  @override
+  String get mapStyleTerrain => 'Рельєф';
+
+  @override
+  String get mapStyleSatellite => 'Супутник';
 }

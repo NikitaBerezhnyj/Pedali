@@ -126,5 +126,9 @@
   "kilometerUnit": "km",
   "mileUnit": "mi",
   "kilometersPerHourUnit": "km/h",
-  "milesPerHourUnit": "mph"
+  "milesPerHourUnit": "mph",
+
+  "mapStyleCycling": "Vélo",
+  "mapStyleTerrain": "Relief",
+  "mapStyleSatellite": "Satellite"
 }

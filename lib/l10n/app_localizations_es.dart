@@ -323,4 +323,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get milesPerHourUnit => 'mph';
+
+  @override
+  String get mapStyleCycling => 'Ciclismo';
+
+  @override
+  String get mapStyleTerrain => 'Relieve';
+
+  @override
+  String get mapStyleSatellite => 'Satélite';
 }
