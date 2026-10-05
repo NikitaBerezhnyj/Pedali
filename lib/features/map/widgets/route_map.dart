@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:pedali/core/widgets/empty_state.dart';
 import 'package:pedali/features/map/widgets/app_tile_layer.dart';
 import 'package:pedali/features/map/widgets/route_endpoints_layer.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 import 'package:pedali/theme/app_tokens.dart';
 
 class RoutePolylineLayer extends StatelessWidget {
@@ -42,6 +43,7 @@ class RouteMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final points = segments.expand((s) => s).toList();
     final theme = Theme.of(context);
 
@@ -55,9 +57,8 @@ class RouteMap extends StatelessWidget {
         child: Center(
           child: EmptyState(
             icon: Icons.route_outlined,
-            title: 'Маршрут ще не видно',
-            description:
-                'У цій поїздці замало GPS-точок для відображення маршруту.',
+            title: t.routeNotVisibleTitle,
+            description: t.routeNotVisibleDescription,
             iconColor: theme.colorScheme.primary,
             showIconBackground: false,
             iconSize: 52,

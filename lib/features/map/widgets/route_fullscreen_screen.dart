@@ -5,6 +5,7 @@ import 'package:pedali/core/widgets/app_circle_button.dart';
 import 'package:pedali/features/map/widgets/app_tile_layer.dart';
 import 'package:pedali/features/map/widgets/route_endpoints_layer.dart';
 import 'package:pedali/features/map/widgets/route_map.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 
 class RouteFullscreenScreen extends StatefulWidget {
   const RouteFullscreenScreen({super.key, required this.segments});
@@ -35,6 +36,8 @@ class _RouteFullscreenScreenState extends State<RouteFullscreenScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -60,13 +63,13 @@ class _RouteFullscreenScreenState extends State<RouteFullscreenScreen> {
                 children: [
                   AppCircleButton(
                     icon: Icons.close,
-                    tooltip: "Закрити",
+                    tooltip: t.close,
                     onPressed: () => Navigator.pop(context),
                   ),
                   const Spacer(),
                   AppCircleButton(
                     icon: Icons.center_focus_strong_outlined,
-                    tooltip: "Показати весь маршрут",
+                    tooltip: t.showFullRoute,
                     onPressed: () => _controller.fitCamera(_fit),
                   ),
                 ],

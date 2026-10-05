@@ -4,5 +4,127 @@
   "themeLabel": "Тема",
   "systemThemeLabel": "Системна",
   "lightThemeLabel": "Світла",
-  "darkThemeLabel": "Темна"
+  "darkThemeLabel": "Темна",
+  "mapStyleLabel": "Стиль мапи",
+  "unitsLabel": "Одиниці вимірювання",
+  "kilometersLabel": "Кілометри",
+  "milesLabel": "Милі",
+  "keepScreenOnLabel": "Не вимикати екран під час запису",
+  "keepScreenOnDescription": "Збільшує витрату заряду батареї",
+
+  "statsTitle": "Статистика",
+  "statsEmptyTitle": "Тут будуть твої рекорди",
+  "statsEmptyDescription": "Запиши свою першу поїздку, щоб почати збирати статистику.",
+  "recordsTitle": "Рекорди",
+  "longestRideLabel": "Найдовша поїздка",
+  "fastestRideLabel": "Найшвидша поїздка",
+  "longestRideByTimeLabel": "Найдовша за часом",
+  "monthlyStatsTitle": "По місяцях",
+  "monthlyStatsErrorTitle": "Не вдалося завантажити статистику",
+  "monthlyStatsEmpty": "Поки немає даних",
+  "monthlyStatsSubtitle": "{rideCount, plural, one{{rideCount} поїздка} few{{rideCount} поїздки} many{{rideCount} поїздок} other{{rideCount} поїздки}} • {duration}",
+  "@monthlyStatsSubtitle": {
+    "placeholders": {
+      "rideCount": {
+        "type": "int"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+
+  "shareRideTitle": "Поділитися поїздкою",
+  "shareButton": "Поділитися",
+  "shareImageError": "Не вдалося підготувати зображення",
+  "shareMovingTimeLabel": "ЧАС У РУСІ",
+  "shareAvgSpeedLabel": "СЕР. ШВИДКІСТЬ",
+  "shareMaxSpeedLabel": "МАКС. ШВИДКІСТЬ",
+
+  "finishRideTitle": "Завершити поїздку?",
+  "finishRideMessage": "Запис зупиниться і поїздку буде збережено.",
+  "finishRideConfirm": "Завершити",
+  "shortRideTitle": "Дуже коротка поїздка",
+  "shortRideMessage": "Зберегти її все одно?",
+  "saveRide": "Зберегти",
+  "discardRide": "Видалити",
+  "back": "Назад",
+  "myLocation": "До моєї позиції",
+  "gpsUnstable": "GPS нестабільний — запис призупинено",
+  "gpsSearching": "GPS: пошук сигналу",
+  "gpsAccuracy": "GPS: ±{accuracy} м",
+  "@gpsAccuracy": {
+    "placeholders": {
+      "accuracy": {
+        "type": "int"
+      }
+    }
+  },
+  "finish": "Завершити",
+  "pause": "Пауза",
+  "resume": "Продовжити",
+  "distance": "дистанція",
+  "movingTime": "Час у русі",
+  "elapsedTime": "Заг. час",
+  "averageSpeedShort": "Сер. швидк.",
+  "maximumShort": "Макс.",
+
+  "deleteRideTitle": "Видалити поїздку?",
+  "deleteRideMessage": "Поїздку разом із маршрутом буде видалено назавжди.",
+  "delete": "Видалити",
+  "rideDetailsTitle": "Деталі поїздки",
+  "share": "Поділитися",
+  "rideLoadError": "Не вдалося завантажити поїздку",
+  "rideNotFoundTitle": "Поїздку не знайдено",
+  "rideNotFoundDescription": "Можливо, її вже було видалено.",
+  "routeLoadError": "Не вдалося завантажити маршрут",
+  "achievements": "Досягнення",
+  "longestRideAchievement": "Найдовша поїздка",
+  "highestAverageSpeedAchievement": "Найвища середня швидкість",
+  "longestMovingTimeAchievement": "Найдовший час у русі",
+  "stats": "Показники",
+  "totalTime": "Загальний час",
+  "averageSpeed": "Середня швидкість",
+  "maximumSpeed": "Максимальна швидкість",
+  "unfinishedRideTitle": "Незавершена поїздка",
+  "unfinishedRideMessage": "Схоже, застосунок закрився під час запису.\n\nПочата {ago} тому · {distance}\n\nПродовжити цю поїздку чи видалити запис?",
+  "@unfinishedRideMessage": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "continueLabel": "Продовжити",
+  "startedDaysAgo": "{count, plural, one{{count} день} few{{count} дні} many{{count} днів} other{{count} дня}}",
+  "startedHoursAgo": "{count, plural, one{{count} годину} few{{count} години} many{{count} годин} other{{count} години}}",
+  "startedMinutesAgo": "{count, plural, one{{count} хвилину} few{{count} хвилини} many{{count} хвилин} other{{count} хвилини}}",
+  "startedJustNow": "щойно",
+  "statistics": "Статистика",
+  "settings": "Налаштування",
+  "rideListEmptyTitle": "Час вирушати",
+  "rideListEmptyDescription": "Запиши свою першу поїздку, і вона зʼявиться тут.",
+  "startRide": "Почати поїздку",
+
+  "routeNotVisibleTitle": "Маршрут ще не видно",
+  "routeNotVisibleDescription": "У цій поїздці замало GPS-точок для відображення маршруту.",
+  "close": "Закрити",
+  "showFullRoute": "Показати весь маршрут",
+
+  "tryAgainLater": "Спробуй ще раз трохи пізніше.",
+  "tryAgain": "Спробувати ще",
+  "cancel": "Скасувати",
+
+  "ridesLoadError": "Не вдалося завантажити поїздки",
+
+  "hourShort": " год",
+  "minuteShort": " хв",
+  "secondShort": " с",
+  "kilometerUnit": "км",
+  "mileUnit": "миль",
+  "kilometersPerHourUnit": "км/год",
+  "milesPerHourUnit": "миль/год"
 }

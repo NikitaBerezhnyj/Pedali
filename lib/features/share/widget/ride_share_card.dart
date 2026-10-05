@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pedali/app/app_theme.dart';
 import 'package:pedali/features/share/domain/share_card_data.dart';
 import 'package:pedali/features/share/widget/route_painter.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 
 class RideShareCard extends StatelessWidget {
   const RideShareCard({super.key, required this.data});
@@ -15,6 +16,7 @@ class RideShareCard extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
     final bg = AppTheme.seed.shade800;
     final soft = AppTheme.seed.shade100;
+    final t = AppLocalizations.of(context)!;
 
     return MediaQuery.withNoTextScaling(
       child: SizedBox(
@@ -41,7 +43,7 @@ class RideShareCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      'PEDALI',
+                      'Pedali',
                       style: tt.labelLarge?.copyWith(
                         color: Colors.white,
                         fontSize: 13,
@@ -83,9 +85,12 @@ class RideShareCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    _Stat(label: 'ЧАС У РУСІ', value: data.movingTime),
-                    _Stat(label: 'СЕРЕДНЯ', value: data.avgSpeed),
-                    _Stat(label: 'МАКС.', value: data.maxSpeed),
+                    _Stat(
+                      label: t.shareMovingTimeLabel,
+                      value: data.movingTime,
+                    ),
+                    _Stat(label: t.shareAvgSpeedLabel, value: data.avgSpeed),
+                    _Stat(label: t.shareMaxSpeedLabel, value: data.maxSpeed),
                   ],
                 ),
               ],

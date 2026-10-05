@@ -11,12 +11,14 @@ class RecordTile extends StatelessWidget {
     required this.label,
     required this.ride,
     required this.valueBuilder,
+    required this.locale,
   });
 
   final IconData icon;
   final String label;
   final Ride? ride;
   final String Function(Ride ride) valueBuilder;
+  final String locale;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class RecordTile extends StatelessWidget {
     return AppListCard(
       leading: Icon(icon, color: cs.primary),
       title: label,
-      subtitle: r == null ? null : formatStartedAt(r.startedAt),
+      subtitle: r == null ? null : formatStartedAt(r.startedAt, locale: locale),
       trailing: r == null
           ? const Text('—')
           : Row(

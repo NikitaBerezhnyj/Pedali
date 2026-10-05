@@ -1,27 +1,31 @@
-String formatDuration(Duration d) {
-  final h = d.inHours;
-  final m = d.inMinutes.remainder(60);
-  if (h > 0) return '${h}h ${m}m';
-  final s = d.inSeconds.remainder(60);
-  return '${m}m ${s}s';
+import 'package:intl/intl.dart';
+import 'package:pedali/l10n/app_localizations.dart';
+
+String formatDuration(Duration duration, AppLocalizations t) {
+  final h = duration.inHours;
+  final m = duration.inMinutes.remainder(60);
+  final s = duration.inSeconds.remainder(60);
+
+  if (h > 0) {
+    return '${h}${t.hourShort} ${m}${t.minuteShort}';
+  }
+
+  return '${m}${t.minuteShort} ${s}${t.secondShort}';
 }
 
-String formatStartedAt(int startedAtMs, {bool includeTime = false}) {
+String formatStartedAt(
+  int startedAtMs, {
+  required String locale,
+  bool includeTime = false,
+}) {
   final dt = DateTime.fromMillisecondsSinceEpoch(
     startedAtMs,
     isUtc: true,
   ).toLocal();
 
-  final date =
-      '${dt.day.toString().padLeft(2, '0')}.'
-      '${dt.month.toString().padLeft(2, '0')}.'
-      '${dt.year}';
+  final formatter = includeTime
+      ? DateFormat.yMd(locale).add_Hm()
+      : DateFormat.yMd(locale);
 
-  if (!includeTime) {
-    return date;
-  }
-
-  return '$date  '
-      '${dt.hour.toString().padLeft(2, '0')}:'
-      '${dt.minute.toString().padLeft(2, '0')}';
+  return formatter.format(dt);
 }

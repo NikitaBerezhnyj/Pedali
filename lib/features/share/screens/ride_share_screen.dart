@@ -4,6 +4,7 @@ import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/features/share/domain/ride_share_service.dart';
 import 'package:pedali/features/share/domain/share_card_data.dart';
 import 'package:pedali/features/share/widget/ride_share_card.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 import 'package:pedali/theme/app_tokens.dart';
 
 class RideShareScreen extends ConsumerStatefulWidget {
@@ -40,9 +41,11 @@ class _RideShareScreenState extends ConsumerState<RideShareScreen> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Не вдалося підготувати картинку')),
-      );
+      final t = AppLocalizations.of(context)!;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(t.shareImageError)));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -51,12 +54,10 @@ class _RideShareScreenState extends ConsumerState<RideShareScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final t = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: const AppHeader(
-        title: 'Поділитися поїздкою',
-        showBackButton: true,
-      ),
+      appBar: AppHeader(title: t.shareRideTitle, showBackButton: true),
       body: SafeArea(
         top: false,
         child: Column(
@@ -92,7 +93,7 @@ class _RideShareScreenState extends ConsumerState<RideShareScreen> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.ios_share),
-                  label: const Text('Поділитися'),
+                  label: Text(t.shareButton),
                 ),
               ),
             ),

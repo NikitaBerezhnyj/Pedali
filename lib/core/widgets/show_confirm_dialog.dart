@@ -4,8 +4,8 @@ Future<bool> showConfirmDialog(
   BuildContext context, {
   required String title,
   required String confirmLabel,
+  required String cancelLabel,
   String? message,
-  String cancelLabel = 'Скасувати',
   bool destructive = false,
   bool barrierDismissible = true,
 }) async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 import 'package:pedali/theme/app_colors.dart';
 import 'package:pedali/theme/app_tokens.dart';
 
@@ -16,6 +17,7 @@ class GpsStatus extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final t = AppLocalizations.of(context)!;
 
     if (isAutoPaused) {
       return Container(
@@ -31,7 +33,7 @@ class GpsStatus extends StatelessWidget {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                'GPS нестабільний — запис призупинено',
+                t.gpsUnstable,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: cs.onErrorContainer,
                 ),
@@ -46,9 +48,7 @@ class GpsStatus extends StatelessWidget {
     final good = (accuracy ?? 999) <= 20;
 
     return Text(
-      accuracy == null
-          ? 'GPS: пошук сигналу'
-          : 'GPS: ±${accuracy!.toStringAsFixed(0)} м',
+      accuracy == null ? t.gpsSearching : t.gpsAccuracy(accuracy!.round()),
       style: theme.textTheme.bodySmall?.copyWith(
         color: good ? colors.success : colors.warning,
       ),

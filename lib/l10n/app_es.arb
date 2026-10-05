@@ -4,5 +4,127 @@
   "themeLabel": "Tema",
   "systemThemeLabel": "Sistema",
   "lightThemeLabel": "Claro",
-  "darkThemeLabel": "Oscuro"
+  "darkThemeLabel": "Oscuro",
+  "mapStyleLabel": "Estilo del mapa",
+  "unitsLabel": "Unidades",
+  "kilometersLabel": "Kilómetros",
+  "milesLabel": "Millas",
+  "keepScreenOnLabel": "Mantener la pantalla encendida durante la grabación",
+  "keepScreenOnDescription": "Consume más batería",
+
+  "statsTitle": "Statistiques",
+  "statsEmptyTitle": "Vos records apparaîtront ici",
+  "statsEmptyDescription": "Enregistrez votre première sortie pour commencer à suivre vos statistiques.",
+  "recordsTitle": "Records",
+  "longestRideLabel": "Sortie la plus longue",
+  "fastestRideLabel": "Sortie la plus rapide",
+  "longestRideByTimeLabel": "Sortie la plus longue en durée",
+  "monthlyStatsTitle": "Par mois",
+  "monthlyStatsErrorTitle": "Impossible de charger les statistiques",
+  "monthlyStatsEmpty": "Aucune donnée pour le moment",
+  "monthlyStatsSubtitle": "{rideCount, plural, =0{Aucune sortie} one{{rideCount} sortie} other{{rideCount} sorties}} • {duration}",
+  "@monthlyStatsSubtitle": {
+    "placeholders": {
+      "rideCount": {
+        "type": "int"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+
+  "shareRideTitle": "Partager la sortie",
+  "shareButton": "Partager",
+  "shareImageError": "Impossible de préparer l’image",
+  "shareMovingTimeLabel": "TEMPS EN MOUVEMENT",
+  "shareAvgSpeedLabel": "VIT. MOYENNE",
+  "shareMaxSpeedLabel": "VIT. MAXIMALE",
+
+  "finishRideTitle": "Terminer la sortie ?",
+  "finishRideMessage": "L’enregistrement s’arrêtera et la sortie sera enregistrée.",
+  "finishRideConfirm": "Terminer",
+  "shortRideTitle": "Sortie très courte",
+  "shortRideMessage": "La sauvegarder quand même ?",
+  "saveRide": "Enregistrer",
+  "discardRide": "Supprimer",
+  "back": "Retour",
+  "myLocation": "Ma position",
+  "gpsUnstable": "GPS instable — enregistrement en pause",
+  "gpsSearching": "GPS : recherche du signal",
+  "gpsAccuracy": "GPS : ±{accuracy} m",
+  "@gpsAccuracy": {
+    "placeholders": {
+      "accuracy": {
+        "type": "int"
+      }
+    }
+  },
+  "finish": "Terminer",
+  "pause": "Pause",
+  "resume": "Reprendre",
+  "distance": "distance",
+  "movingTime": "Temps en mouvement",
+  "elapsedTime": "Temps total",
+  "averageSpeedShort": "Vit. moyenne",
+  "maximumShort": "Max.",
+
+  "deleteRideTitle": "Supprimer la sortie ?",
+  "deleteRideMessage": "La sortie et son itinéraire seront définitivement supprimés.",
+  "delete": "Supprimer",
+  "rideDetailsTitle": "Détails de la sortie",
+  "share": "Partager",
+  "rideLoadError": "Impossible de charger la sortie",
+  "rideNotFoundTitle": "Sortie introuvable",
+  "rideNotFoundDescription": "Elle a peut-être déjà été supprimée.",
+  "routeLoadError": "Impossible de charger l’itinéraire",
+  "achievements": "Succès",
+  "longestRideAchievement": "Sortie la plus longue",
+  "highestAverageSpeedAchievement": "Vitesse moyenne la plus élevée",
+  "longestMovingTimeAchievement": "Temps en mouvement le plus long",
+  "stats": "Statistiques",
+  "totalTime": "Temps total",
+  "averageSpeed": "Vitesse moyenne",
+  "maximumSpeed": "Vitesse maximale",
+  "unfinishedRideTitle": "Sortie inachevée",
+  "unfinishedRideMessage": "Il semble que l’application se soit fermée pendant l’enregistrement.\n\nCommencée il y a {ago} · {distance}\n\nVoulez-vous continuer cette sortie ou supprimer l’enregistrement ?",
+  "@unfinishedRideMessage": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "continueLabel": "Continuer",
+  "startedDaysAgo": "{count, plural, one{il y a {count} jour} other{il y a {count} jours}}",
+  "startedHoursAgo": "{count, plural, one{il y a {count} heure} other{il y a {count} heures}}",
+  "startedMinutesAgo": "{count, plural, one{il y a {count} minute} other{il y a {count} minutes}}",
+  "startedJustNow": "à l’instant",
+  "statistics": "Statistiques",
+  "settings": "Paramètres",
+  "rideListEmptyTitle": "À vélo !",
+  "rideListEmptyDescription": "Enregistrez votre première sortie et elle apparaîtra ici.",
+  "startRide": "Commencer la sortie",
+
+  "routeNotVisibleTitle": "La ruta aún no está disponible",
+  "routeNotVisibleDescription": "No hay suficientes puntos GPS en esta salida para mostrar la ruta.",
+  "close": "Cerrar",
+  "showFullRoute": "Mostrar toda la ruta",
+
+  "tryAgainLater": "Inténtalo de nuevo más tarde.",
+  "tryAgain": "Intentar de nuevo",
+  "cancel": "Cancelar",
+
+  "ridesLoadError": "No se pudieron cargar las salidas",
+
+  "hourShort": " h",
+  "minuteShort": " min",
+  "secondShort": " s",
+  "kilometerUnit": "km",
+  "mileUnit": "mi",
+  "kilometersPerHourUnit": "km/h",
+  "milesPerHourUnit": "mph"
 }

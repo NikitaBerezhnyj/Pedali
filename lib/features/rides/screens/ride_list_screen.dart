@@ -13,6 +13,7 @@ import 'package:pedali/features/rides/screens/ride_detail_screen.dart';
 import 'package:pedali/features/settings/providers/units_provider.dart';
 import 'package:pedali/features/settings/screens/settings_screen.dart';
 import 'package:pedali/features/stats/screens/stats_screen.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 import 'package:pedali/theme/app_tokens.dart';
 
 class RideListScreen extends ConsumerStatefulWidget {
@@ -26,31 +27,39 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkStaleRide());
   }
 
   Future<void> _checkStaleRide() async {
     final controller = ref.read(recorderControllerProvider.notifier);
+
     final stale = await controller.checkForActiveRide();
+
     if (stale == null || !mounted) return;
 
     final info = await controller.getStaleRideInfo(stale);
+
     if (!mounted) return;
 
+    final t = AppLocalizations.of(context)!;
     final units = ref.read(unitsProvider);
+
     final agoText = _formatAgo(
       DateTime.now().toUtc().difference(info.startedAt),
+      t,
     );
 
     final resume = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('Незавершена поїздка'),
+        title: Text(t.unfinishedRideTitle),
         content: Text(
-          'Схоже, застосунок закрився під час запису.\n\n'
-          'Почата $agoText тому · ${units.formatDistance(info.distanceMeters)}\n\n'
-          'Продовжити цю поїздку чи видалити запис?',
+          t.unfinishedRideMessage(
+            agoText,
+            units.formatDistance(info.distanceMeters, t),
+          ),
         ),
         actions: [
           TextButton(
@@ -58,12 +67,12 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
               foregroundColor: Theme.of(ctx).colorScheme.error,
             ),
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Видалити'),
+            child: Text(t.delete),
           ),
           FilledButton(
             style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Продовжити'),
+            child: Text(t.continueLabel),
           ),
         ],
       ),
@@ -73,7 +82,9 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
 
     if (resume == true) {
       await controller.resumeStaleRide(stale);
+
       if (!mounted) return;
+
       await Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const RecordingScreen()),
@@ -81,14 +92,24 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     } else {
       await controller.discardStaleRide(stale);
     }
+
     ref.invalidate(finishedRidesProvider);
   }
 
-  String _formatAgo(Duration d) {
-    if (d.inDays > 0) return '${d.inDays} дн.';
-    if (d.inHours > 0) return '${d.inHours} год';
-    if (d.inMinutes > 0) return '${d.inMinutes} хв';
-    return 'щойно';
+  String _formatAgo(Duration duration, AppLocalizations t) {
+    if (duration.inDays > 0) {
+      return t.startedDaysAgo(duration.inDays);
+    }
+
+    if (duration.inHours > 0) {
+      return t.startedHoursAgo(duration.inHours);
+    }
+
+    if (duration.inMinutes > 0) {
+      return t.startedMinutesAgo(duration.inMinutes);
+    }
+
+    return t.startedJustNow;
   }
 
   Future<void> _openStats() => Navigator.push(
@@ -103,11 +124,14 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
 
   Future<void> _startRide() async {
     await ref.read(recorderControllerProvider.notifier).start();
+
     if (!mounted) return;
+
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const RecordingScreen()),
     );
+
     ref.invalidate(finishedRidesProvider);
   }
 
@@ -115,6 +139,7 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final t = AppLocalizations.of(context)!;
     final units = ref.watch(unitsProvider);
 
     return Scaffold(
@@ -122,26 +147,29 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.bar_chart),
-            tooltip: 'Статистика',
+            tooltip: t.statistics,
             onPressed: _openStats,
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            tooltip: 'Налаштування',
+            tooltip: t.settings,
             onPressed: _openSettings,
           ),
         ],
       ),
       body: AsyncValueView(
         value: ref.watch(finishedRidesProvider),
+        errorTitle: t.ridesLoadError,
+        retryDescription: t.tryAgainLater,
+        retryLabel: t.tryAgain,
         onRetry: () => ref.invalidate(finishedRidesProvider),
         data: (rides) {
           if (rides.isEmpty) {
-            return const Center(
+            return Center(
               child: EmptyState(
                 icon: Icons.directions_bike,
-                title: 'Час вирушати',
-                description: 'Запиши свою першу поїздку, і вона зʼявиться тут.',
+                title: t.rideListEmptyTitle,
+                description: t.rideListEmptyDescription,
               ),
             );
           }
@@ -153,15 +181,15 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
               final ride = rides[i];
 
               return AppListCard(
-                title: units.formatDistance(ride.distanceMeters),
+                title: units.formatDistance(ride.distanceMeters, t),
                 subtitle:
-                    '${formatStartedAt(ride.startedAt)} • '
-                    '${formatDuration(Duration(milliseconds: ride.movingTimeMs))}',
+                    '${formatStartedAt(ride.startedAt, locale: t.localeName)} • '
+                    '${formatDuration(Duration(milliseconds: ride.movingTimeMs), t)}',
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      units.formatSpeed(ride.avgSpeedMps),
+                      units.formatSpeed(ride.avgSpeedMps, t),
                       style: theme.textTheme.titleSmall,
                     ),
                     Icon(Icons.chevron_right, color: cs.onSurfaceVariant),
@@ -178,7 +206,6 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
           );
         },
       ),
-
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -192,7 +219,7 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
             child: FilledButton.icon(
               onPressed: _startRide,
               icon: const Icon(Icons.directions_bike),
-              label: const Text('Почати поїздку'),
+              label: Text(t.startRide),
             ),
           ),
         ),

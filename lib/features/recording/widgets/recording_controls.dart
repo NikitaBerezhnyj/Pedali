@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pedali/core/widgets/app_circle_button.dart';
 import 'package:pedali/features/recording/domain/recorder_state.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 
 class RecordingControls extends StatelessWidget {
   const RecordingControls({
@@ -18,10 +19,12 @@ class RecordingControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     final stop = AppCircleButton(
       icon: Icons.stop,
       variant: AppCircleButtonVariant.destructive,
-      tooltip: 'Завершити',
+      tooltip: t.finish,
       onPressed: onStop,
     );
 
@@ -32,7 +35,7 @@ class RecordingControls extends StatelessWidget {
             AppCircleButton(
               icon: Icons.pause,
               variant: AppCircleButtonVariant.tonal,
-              tooltip: 'Пауза',
+              tooltip: t.pause,
               onPressed: onPause,
             ),
             const SizedBox(width: 8),
@@ -46,7 +49,7 @@ class RecordingControls extends StatelessWidget {
             AppCircleButton(
               icon: Icons.play_arrow,
               variant: AppCircleButtonVariant.tonal,
-              tooltip: 'Продовжити',
+              tooltip: t.resume,
               onPressed: onResume,
             ),
             const SizedBox(width: 8),

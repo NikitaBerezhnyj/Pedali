@@ -4,5 +4,127 @@
   "themeLabel": "Theme",
   "systemThemeLabel": "System",
   "lightThemeLabel": "Light",
-  "darkThemeLabel": "Dark"
+  "darkThemeLabel": "Dark",
+  "mapStyleLabel": "Map style",
+  "unitsLabel": "Units",
+  "kilometersLabel": "Kilometers",
+  "milesLabel": "Miles",
+  "keepScreenOnLabel": "Keep screen on while recording",
+  "keepScreenOnDescription": "Uses more battery power",
+
+  "statsTitle": "Statistics",
+  "statsEmptyTitle": "Your records will appear here",
+  "statsEmptyDescription": "Record your first ride to start tracking your stats.",
+  "recordsTitle": "Records",
+  "longestRideLabel": "Longest ride",
+  "fastestRideLabel": "Fastest ride",
+  "longestRideByTimeLabel": "Longest ride by duration",
+  "monthlyStatsTitle": "By month",
+  "monthlyStatsErrorTitle": "Couldn't load statistics",
+  "monthlyStatsEmpty": "No data yet",
+  "monthlyStatsSubtitle": "{rideCount, plural, =0{No rides} one{{rideCount} ride} other{{rideCount} rides}} • {duration}",
+  "@monthlyStatsSubtitle": {
+    "placeholders": {
+      "rideCount": {
+        "type": "int"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+
+  "shareRideTitle": "Share ride",
+  "shareButton": "Share",
+  "shareImageError": "Couldn't prepare the image",
+  "shareMovingTimeLabel": "MOVING TIME",
+  "shareAvgSpeedLabel": "AVG. SPEED",
+  "shareMaxSpeedLabel": "MAX. SPEED",
+
+  "finishRideTitle": "Finish ride?",
+  "finishRideMessage": "Recording will stop and the ride will be saved.",
+  "finishRideConfirm": "Finish",
+  "shortRideTitle": "Very short ride",
+  "shortRideMessage": "Save it anyway?",
+  "saveRide": "Save",
+  "discardRide": "Delete",
+  "back": "Back",
+  "myLocation": "My location",
+  "gpsUnstable": "GPS is unstable — recording paused",
+  "gpsSearching": "GPS: searching for signal",
+  "gpsAccuracy": "GPS: ±{accuracy} m",
+  "@gpsAccuracy": {
+    "placeholders": {
+      "accuracy": {
+        "type": "int"
+      }
+    }
+  },
+  "finish": "Finish",
+  "pause": "Pause",
+  "resume": "Resume",
+  "distance": "distance",
+  "movingTime": "Moving time",
+  "elapsedTime": "Total time",
+  "averageSpeedShort": "Avg. speed",
+  "maximumShort": "Max.",
+
+  "deleteRideTitle": "Delete ride?",
+  "deleteRideMessage": "The ride and its route will be permanently deleted.",
+  "delete": "Delete",
+  "rideDetailsTitle": "Ride details",
+  "share": "Share",
+  "rideLoadError": "Couldn't load the ride",
+  "rideNotFoundTitle": "Ride not found",
+  "rideNotFoundDescription": "It may have already been deleted.",
+  "routeLoadError": "Couldn't load the route",
+  "achievements": "Achievements",
+  "longestRideAchievement": "Longest ride",
+  "highestAverageSpeedAchievement": "Highest average speed",
+  "longestMovingTimeAchievement": "Longest moving time",
+  "stats": "Statistics",
+  "totalTime": "Total time",
+  "averageSpeed": "Average speed",
+  "maximumSpeed": "Maximum speed",
+  "unfinishedRideTitle": "Unfinished ride",
+  "unfinishedRideMessage": "It looks like the app closed while recording.\n\nStarted {ago} ago · {distance}\n\nWould you like to continue this ride or delete the recording?",
+  "@unfinishedRideMessage": {
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "continueLabel": "Continue",
+  "startedDaysAgo": "{count, plural, one{{count} day} other{{count} days}}",
+  "startedHoursAgo": "{count, plural, one{{count} hour} other{{count} hours}}",
+  "startedMinutesAgo": "{count, plural, one{{count} minute} other{{count} minutes}}",
+  "startedJustNow": "just now",
+  "statistics": "Statistics",
+  "settings": "Settings",
+  "rideListEmptyTitle": "Time to ride",
+  "rideListEmptyDescription": "Record your first ride and it will appear here.",
+  "startRide": "Start ride",
+
+  "routeNotVisibleTitle": "Route not available yet",
+  "routeNotVisibleDescription": "There aren't enough GPS points in this ride to display the route.",
+  "close": "Close",
+  "showFullRoute": "Show full route",
+
+  "tryAgainLater": "Please try again later.",
+  "tryAgain": "Try again",
+  "cancel": "Cancel",
+
+  "ridesLoadError": "Couldn't load rides",
+
+  "hourShort": "h",
+  "minuteShort": "m",
+  "secondShort": "s",
+  "kilometerUnit": "km",
+  "mileUnit": "mi",
+  "kilometersPerHourUnit": "km/h",
+  "milesPerHourUnit": "mph"
 }

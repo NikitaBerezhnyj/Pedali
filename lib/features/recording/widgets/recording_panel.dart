@@ -5,6 +5,7 @@ import 'package:pedali/features/recording/domain/recorder_state.dart';
 import 'package:pedali/features/recording/widgets/gps_status.dart';
 import 'package:pedali/features/recording/widgets/mini_stat.dart';
 import 'package:pedali/features/recording/widgets/recording_controls.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 import 'package:pedali/theme/app_tokens.dart';
 
 class RecordingPanel extends StatelessWidget {
@@ -33,6 +34,8 @@ class RecordingPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final t = AppLocalizations.of(context)!;
+
     final speed = state.currentSpeedMps;
     final message = state.message;
 
@@ -77,7 +80,7 @@ class RecordingPanel extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    speed == null ? '--' : units.formatSpeed(speed),
+                    speed == null ? '--' : units.formatSpeed(speed, t),
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -96,11 +99,11 @@ class RecordingPanel extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    units.formatDistance(state.distanceMeters),
+                    units.formatDistance(state.distanceMeters, t),
                     style: theme.textTheme.titleLarge,
                   ),
                   Text(
-                    'дистанція',
+                    t.distance,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: cs.onSurfaceVariant,
                     ),
@@ -112,20 +115,20 @@ class RecordingPanel extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   MiniStat(
-                    label: 'Час у русі',
-                    value: formatDuration(state.movingTime),
+                    label: t.movingTime,
+                    value: formatDuration(state.movingTime, t),
                   ),
                   MiniStat(
-                    label: 'Заг. час',
-                    value: formatDuration(state.elapsedTime),
+                    label: t.elapsedTime,
+                    value: formatDuration(state.elapsedTime, t),
                   ),
                   MiniStat(
-                    label: 'Сер. швидк.',
-                    value: units.formatSpeed(state.avgSpeedMps),
+                    label: t.averageSpeedShort,
+                    value: units.formatSpeed(state.avgSpeedMps, t),
                   ),
                   MiniStat(
-                    label: 'Макс.',
-                    value: units.formatSpeed(state.maxSpeedMps),
+                    label: t.maximumShort,
+                    value: units.formatSpeed(state.maxSpeedMps, t),
                   ),
                 ],
               ),

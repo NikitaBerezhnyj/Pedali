@@ -10,6 +10,7 @@ import 'package:pedali/features/recording/widgets/recording_map.dart';
 import 'package:pedali/features/recording/widgets/recording_panel.dart';
 import 'package:pedali/features/settings/providers/keep_screen_on_provider.dart';
 import 'package:pedali/features/settings/providers/units_provider.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 import 'package:pedali/theme/app_tokens.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -23,11 +24,13 @@ class RecordingScreen extends ConsumerStatefulWidget {
 class _RecordingScreenState extends ConsumerState<RecordingScreen> {
   final _mapController = MapController();
   final _sheetController = DraggableScrollableController();
+
   bool _followMe = true;
 
   @override
   void initState() {
     super.initState();
+
     if (ref.read(keepScreenOnProvider)) {
       WakelockPlus.enable();
     }
@@ -47,16 +50,20 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
 
   void _recenter(LatLng? position) {
     if (position == null) return;
+
     setState(() => _followMe = true);
     _mapController.move(position, _mapController.camera.zoom);
   }
 
   Future<void> _confirmStop() async {
+    final t = AppLocalizations.of(context)!;
+
     final confirmed = await showConfirmDialog(
       context,
-      title: 'Завершити поїздку?',
-      message: 'Запис зупиниться і поїздку буде збережено.',
-      confirmLabel: 'Завершити',
+      title: t.finishRideTitle,
+      message: t.finishRideMessage,
+      confirmLabel: t.finishRideConfirm,
+      cancelLabel: t.cancel,
       destructive: true,
     );
 
@@ -65,6 +72,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
     final controller = ref.read(recorderControllerProvider.notifier);
 
     await controller.stop();
+
     if (!mounted) return;
 
     if (controller.isSavable) {
@@ -72,10 +80,10 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
     } else {
       final keep = await showConfirmDialog(
         context,
-        title: 'Дуже коротка поїздка',
-        message: 'Зберегти її все одно?',
-        confirmLabel: 'Зберегти',
-        cancelLabel: 'Видалити',
+        title: t.shortRideTitle,
+        message: t.shortRideMessage,
+        confirmLabel: t.saveRide,
+        cancelLabel: t.discardRide,
         barrierDismissible: false,
       );
 
@@ -86,11 +94,15 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
       }
     }
 
-    if (mounted) Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     final s = ref.watch(recorderControllerProvider);
     final c = ref.read(recorderControllerProvider.notifier);
     final units = ref.watch(unitsProvider);
@@ -107,7 +119,9 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
     return PopScope(
       canPop: !_isActive(s.status),
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _confirmStop();
+        if (!didPop) {
+          _confirmStop();
+        }
       },
       child: Scaffold(
         body: Stack(
@@ -129,7 +143,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
               left: 12,
               child: AppCircleButton(
                 icon: Icons.arrow_back,
-                tooltip: 'Назад',
+                tooltip: t.back,
                 onPressed: () => Navigator.maybePop(context),
               ),
             ),
@@ -149,7 +163,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
                 },
                 child: AppCircleButton(
                   icon: Icons.my_location,
-                  tooltip: 'До моєї позиції',
+                  tooltip: t.myLocation,
                   onPressed: () => _recenter(s.currentPosition),
                 ),
               ),

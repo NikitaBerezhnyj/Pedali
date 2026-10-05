@@ -4,11 +4,11 @@ import 'package:pedali/core/utils/units.dart';
 import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/features/map/domain/map_style.dart';
 import 'package:pedali/features/map/domain/tile_config.dart';
-import 'package:pedali/features/map/providers/map_style_provider.dart';
 import 'package:pedali/features/settings/providers/keep_screen_on_provider.dart';
 import 'package:pedali/features/settings/providers/locale_provider.dart';
 import 'package:pedali/features/settings/providers/theme_provider.dart';
 import 'package:pedali/features/settings/providers/units_provider.dart';
+import 'package:pedali/features/map/providers/map_style_provider.dart';
 import 'package:pedali/features/settings/widgets/setting_dropdown.dart';
 import 'package:pedali/l10n/app_localizations.dart';
 import 'package:pedali/theme/app_tokens.dart';
@@ -29,6 +29,9 @@ class SettingsScreen extends ConsumerWidget {
 
     final locale = ref.watch(localeProvider);
     final theme = ref.watch(themeProvider);
+    final mapStyle = ref.watch(mapStyleProvider);
+    final units = ref.watch(unitsProvider);
+    final keepScreenOn = ref.watch(keepScreenOnProvider);
 
     final selectedLanguage = supportedLocales.entries
         .firstWhere(
@@ -38,7 +41,7 @@ class SettingsScreen extends ConsumerWidget {
         .key;
 
     return Scaffold(
-      appBar: AppHeader(title: 'Налаштування', showBackButton: true),
+      appBar: AppHeader(title: t.settingsTitle, showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
@@ -89,8 +92,8 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             SettingsDropdown<MapStyle>(
-              label: 'Стиль мапи',
-              value: ref.watch(mapStyleProvider),
+              label: t.mapStyleLabel,
+              value: mapStyle,
               items: MapStyle.values
                   .map(
                     (style) => DropdownMenuItem(
@@ -107,33 +110,33 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             SettingsDropdown<UnitSystem>(
-              label: 'Одиниці',
-              value: ref.watch(unitsProvider),
-              items: const [
+              label: t.unitsLabel,
+              value: units,
+              items: [
                 DropdownMenuItem(
                   value: UnitSystem.metric,
-                  child: Text('Кілометри'),
+                  child: Text(t.kilometersLabel),
                 ),
                 DropdownMenuItem(
                   value: UnitSystem.imperial,
-                  child: Text('Милі'),
+                  child: Text(t.milesLabel),
                 ),
               ],
-              onChanged: (units) {
-                if (units == null) return;
+              onChanged: (value) {
+                if (value == null) return;
 
-                ref.read(unitsProvider.notifier).setUnits(units);
+                ref.read(unitsProvider.notifier).setUnits(value);
               },
             ),
             const SizedBox(height: AppSpacing.lg),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(
-                'Не вимикати екран під час запису',
+                t.keepScreenOnLabel,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              subtitle: const Text('Витрачає більше заряду батареї'),
-              value: ref.watch(keepScreenOnProvider),
+              subtitle: Text(t.keepScreenOnDescription),
+              value: keepScreenOn,
               onChanged: (enabled) {
                 ref.read(keepScreenOnProvider.notifier).setEnabled(enabled);
               },

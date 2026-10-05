@@ -7,8 +7,10 @@ class AsyncValueView<T> extends StatelessWidget {
     super.key,
     required this.value,
     required this.data,
+    required this.errorTitle,
+    required this.retryDescription,
+    required this.retryLabel,
     this.onRetry,
-    this.errorTitle = 'Не вдалося завантажити дані',
     this.stateHeight,
   });
 
@@ -17,6 +19,8 @@ class AsyncValueView<T> extends StatelessWidget {
 
   final VoidCallback? onRetry;
   final String errorTitle;
+  final String retryDescription;
+  final String retryLabel;
 
   final double? stateHeight;
 
@@ -26,7 +30,15 @@ class AsyncValueView<T> extends StatelessWidget {
       loading: () => _frame(const CircularProgressIndicator()),
       error: (e, st) {
         debugPrint('AsyncValueView error: $e\n$st');
-        return _frame(_ErrorState(title: errorTitle, onRetry: onRetry));
+
+        return _frame(
+          _ErrorState(
+            title: errorTitle,
+            description: retryDescription,
+            retryLabel: retryLabel,
+            onRetry: onRetry,
+          ),
+        );
       },
       data: data,
     );
@@ -34,6 +46,7 @@ class AsyncValueView<T> extends StatelessWidget {
 
   Widget _frame(Widget child) {
     final centered = Center(child: child);
+
     return stateHeight == null
         ? centered
         : SizedBox(height: stateHeight, child: centered);
@@ -41,9 +54,16 @@ class AsyncValueView<T> extends StatelessWidget {
 }
 
 class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.title, this.onRetry});
+  const _ErrorState({
+    required this.title,
+    required this.description,
+    required this.retryLabel,
+    this.onRetry,
+  });
 
   final String title;
+  final String description;
+  final String retryLabel;
   final VoidCallback? onRetry;
 
   @override
@@ -56,7 +76,7 @@ class _ErrorState extends StatelessWidget {
         EmptyState(
           icon: Icons.error_outline,
           title: title,
-          description: 'Спробуй ще раз трохи пізніше.',
+          description: description,
           iconColor: cs.onErrorContainer,
           iconBackgroundColor: cs.errorContainer,
         ),
@@ -64,7 +84,7 @@ class _ErrorState extends StatelessWidget {
           TextButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text('Спробувати ще'),
+            label: Text(retryLabel),
           ),
       ],
     );

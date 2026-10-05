@@ -134,6 +134,528 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get darkThemeLabel;
+
+  /// No description provided for @mapStyleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Map style'**
+  String get mapStyleLabel;
+
+  /// No description provided for @unitsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Units'**
+  String get unitsLabel;
+
+  /// No description provided for @kilometersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Kilometers'**
+  String get kilometersLabel;
+
+  /// No description provided for @milesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Miles'**
+  String get milesLabel;
+
+  /// No description provided for @keepScreenOnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep screen on while recording'**
+  String get keepScreenOnLabel;
+
+  /// No description provided for @keepScreenOnDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses more battery power'**
+  String get keepScreenOnDescription;
+
+  /// No description provided for @statsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statsTitle;
+
+  /// No description provided for @statsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your records will appear here'**
+  String get statsEmptyTitle;
+
+  /// No description provided for @statsEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your first ride to start tracking your stats.'**
+  String get statsEmptyDescription;
+
+  /// No description provided for @recordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get recordsTitle;
+
+  /// No description provided for @longestRideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest ride'**
+  String get longestRideLabel;
+
+  /// No description provided for @fastestRideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fastest ride'**
+  String get fastestRideLabel;
+
+  /// No description provided for @longestRideByTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest ride by duration'**
+  String get longestRideByTimeLabel;
+
+  /// No description provided for @monthlyStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'By month'**
+  String get monthlyStatsTitle;
+
+  /// No description provided for @monthlyStatsErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load statistics'**
+  String get monthlyStatsErrorTitle;
+
+  /// No description provided for @monthlyStatsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No data yet'**
+  String get monthlyStatsEmpty;
+
+  /// No description provided for @monthlyStatsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{rideCount, plural, =0{No rides} one{{rideCount} ride} other{{rideCount} rides}} • {duration}'**
+  String monthlyStatsSubtitle(int rideCount, String duration);
+
+  /// No description provided for @shareRideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share ride'**
+  String get shareRideTitle;
+
+  /// No description provided for @shareButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareButton;
+
+  /// No description provided for @shareImageError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t prepare the image'**
+  String get shareImageError;
+
+  /// No description provided for @shareMovingTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MOVING TIME'**
+  String get shareMovingTimeLabel;
+
+  /// No description provided for @shareAvgSpeedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AVG. SPEED'**
+  String get shareAvgSpeedLabel;
+
+  /// No description provided for @shareMaxSpeedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MAX. SPEED'**
+  String get shareMaxSpeedLabel;
+
+  /// No description provided for @finishRideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish ride?'**
+  String get finishRideTitle;
+
+  /// No description provided for @finishRideMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording will stop and the ride will be saved.'**
+  String get finishRideMessage;
+
+  /// No description provided for @finishRideConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get finishRideConfirm;
+
+  /// No description provided for @shortRideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Very short ride'**
+  String get shortRideTitle;
+
+  /// No description provided for @shortRideMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Save it anyway?'**
+  String get shortRideMessage;
+
+  /// No description provided for @saveRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveRide;
+
+  /// No description provided for @discardRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get discardRide;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @myLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'My location'**
+  String get myLocation;
+
+  /// No description provided for @gpsUnstable.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS is unstable — recording paused'**
+  String get gpsUnstable;
+
+  /// No description provided for @gpsSearching.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS: searching for signal'**
+  String get gpsSearching;
+
+  /// No description provided for @gpsAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS: ±{accuracy} m'**
+  String gpsAccuracy(int accuracy);
+
+  /// No description provided for @finish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get finish;
+
+  /// No description provided for @pause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pause;
+
+  /// No description provided for @resume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resume;
+
+  /// No description provided for @distance.
+  ///
+  /// In en, this message translates to:
+  /// **'distance'**
+  String get distance;
+
+  /// No description provided for @movingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Moving time'**
+  String get movingTime;
+
+  /// No description provided for @elapsedTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Total time'**
+  String get elapsedTime;
+
+  /// No description provided for @averageSpeedShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. speed'**
+  String get averageSpeedShort;
+
+  /// No description provided for @maximumShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Max.'**
+  String get maximumShort;
+
+  /// No description provided for @deleteRideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete ride?'**
+  String get deleteRideTitle;
+
+  /// No description provided for @deleteRideMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The ride and its route will be permanently deleted.'**
+  String get deleteRideMessage;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @rideDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride details'**
+  String get rideDetailsTitle;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @rideLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the ride'**
+  String get rideLoadError;
+
+  /// No description provided for @rideNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride not found'**
+  String get rideNotFoundTitle;
+
+  /// No description provided for @rideNotFoundDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'It may have already been deleted.'**
+  String get rideNotFoundDescription;
+
+  /// No description provided for @routeLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the route'**
+  String get routeLoadError;
+
+  /// No description provided for @achievements.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get achievements;
+
+  /// No description provided for @longestRideAchievement.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest ride'**
+  String get longestRideAchievement;
+
+  /// No description provided for @highestAverageSpeedAchievement.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest average speed'**
+  String get highestAverageSpeedAchievement;
+
+  /// No description provided for @longestMovingTimeAchievement.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest moving time'**
+  String get longestMovingTimeAchievement;
+
+  /// No description provided for @stats.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get stats;
+
+  /// No description provided for @totalTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Total time'**
+  String get totalTime;
+
+  /// No description provided for @averageSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Average speed'**
+  String get averageSpeed;
+
+  /// No description provided for @maximumSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum speed'**
+  String get maximumSpeed;
+
+  /// No description provided for @unfinishedRideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfinished ride'**
+  String get unfinishedRideTitle;
+
+  /// No description provided for @unfinishedRideMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like the app closed while recording.\n\nStarted {ago} ago · {distance}\n\nWould you like to continue this ride or delete the recording?'**
+  String unfinishedRideMessage(String ago, String distance);
+
+  /// No description provided for @continueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueLabel;
+
+  /// No description provided for @startedDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} day} other{{count} days}}'**
+  String startedDaysAgo(num count);
+
+  /// No description provided for @startedHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} hour} other{{count} hours}}'**
+  String startedHoursAgo(num count);
+
+  /// No description provided for @startedMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} minute} other{{count} minutes}}'**
+  String startedMinutesAgo(num count);
+
+  /// No description provided for @startedJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get startedJustNow;
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @rideListEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to ride'**
+  String get rideListEmptyTitle;
+
+  /// No description provided for @rideListEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your first ride and it will appear here.'**
+  String get rideListEmptyDescription;
+
+  /// No description provided for @startRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Start ride'**
+  String get startRide;
+
+  /// No description provided for @routeNotVisibleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Route not available yet'**
+  String get routeNotVisibleTitle;
+
+  /// No description provided for @routeNotVisibleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'There aren\'t enough GPS points in this ride to display the route.'**
+  String get routeNotVisibleDescription;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @showFullRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Show full route'**
+  String get showFullRoute;
+
+  /// No description provided for @tryAgainLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again later.'**
+  String get tryAgainLater;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgain;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @ridesLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load rides'**
+  String get ridesLoadError;
+
+  /// No description provided for @hourShort.
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hourShort;
+
+  /// No description provided for @minuteShort.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get minuteShort;
+
+  /// No description provided for @secondShort.
+  ///
+  /// In en, this message translates to:
+  /// **'s'**
+  String get secondShort;
+
+  /// No description provided for @kilometerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'km'**
+  String get kilometerUnit;
+
+  /// No description provided for @mileUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'mi'**
+  String get mileUnit;
+
+  /// No description provided for @kilometersPerHourUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'km/h'**
+  String get kilometersPerHourUnit;
+
+  /// No description provided for @milesPerHourUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'mph'**
+  String get milesPerHourUnit;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -21,6 +21,7 @@ import 'package:pedali/features/rides/widgets/stat_row.dart';
 import 'package:pedali/features/settings/providers/units_provider.dart';
 import 'package:pedali/features/share/domain/share_card_data.dart';
 import 'package:pedali/features/share/screens/ride_share_screen.dart';
+import 'package:pedali/l10n/app_localizations.dart';
 
 class RideDetailScreen extends ConsumerWidget {
   const RideDetailScreen({super.key, required this.rideId});
@@ -31,11 +32,14 @@ class RideDetailScreen extends ConsumerWidget {
       route.expand((s) => s).length >= 2;
 
   Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final t = AppLocalizations.of(context)!;
+
     final ok = await showConfirmDialog(
       context,
-      title: 'Видалити поїздку?',
-      message: 'Поїздку разом із маршрутом буде видалено назавжди.',
-      confirmLabel: 'Видалити',
+      title: t.deleteRideTitle,
+      message: t.deleteRideMessage,
+      confirmLabel: t.delete,
+      cancelLabel: t.cancel,
       destructive: true,
     );
 
@@ -44,7 +48,9 @@ class RideDetailScreen extends ConsumerWidget {
     await ref.read(rideRepositoryProvider).deleteRide(rideId);
     ref.invalidate(finishedRidesProvider);
 
-    if (context.mounted) Navigator.pop(context);
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
   }
 
   void _share(
@@ -52,17 +58,21 @@ class RideDetailScreen extends ConsumerWidget {
     Ride ride,
     List<List<LatLng>> route,
     UnitSystem units,
+    AppLocalizations t,
   ) {
     Navigator.push(
       context,
       RideShareScreen.route(
         ShareCardData(
           segments: route,
-          distance: units.formatDistance(ride.distanceMeters),
-          movingTime: formatDuration(Duration(milliseconds: ride.movingTimeMs)),
-          avgSpeed: units.formatSpeed(ride.avgSpeedMps),
-          maxSpeed: units.formatSpeed(ride.maxSpeedMps),
-          date: formatStartedAt(ride.startedAt),
+          distance: units.formatDistance(ride.distanceMeters, t),
+          movingTime: formatDuration(
+            Duration(milliseconds: ride.movingTimeMs),
+            t,
+          ),
+          avgSpeed: units.formatSpeed(ride.avgSpeedMps, t),
+          maxSpeed: units.formatSpeed(ride.maxSpeedMps, t),
+          date: formatStartedAt(ride.startedAt, locale: t.localeName),
         ),
       ),
     );
@@ -71,6 +81,8 @@ class RideDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final t = AppLocalizations.of(context)!;
+
     final rideAsync = ref.watch(rideProvider(rideId));
     final routeAsync = ref.watch(simplifiedRouteProvider(rideId));
     final records = ref.watch(recordsProvider);
@@ -81,22 +93,22 @@ class RideDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppHeader(
-        title: 'Деталі поїздки',
+        title: t.rideDetailsTitle,
         showBackButton: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.ios_share),
-            tooltip: 'Поділитися',
+            tooltip: t.share,
             onPressed:
                 currentRide != null &&
                     currentRoute != null &&
                     _hasRoute(currentRoute)
-                ? () => _share(context, currentRide, currentRoute, units)
+                ? () => _share(context, currentRide, currentRoute, units, t)
                 : null,
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
-            tooltip: 'Видалити',
+            tooltip: t.delete,
             onPressed: currentRide == null
                 ? null
                 : () => _confirmDelete(context, ref),
@@ -105,23 +117,27 @@ class RideDetailScreen extends ConsumerWidget {
       ),
       body: AsyncValueView(
         value: rideAsync,
-        errorTitle: 'Не вдалося завантажити поїздку',
+        errorTitle: t.rideLoadError,
+        retryDescription: t.tryAgainLater,
+        retryLabel: t.tryAgain,
         onRetry: () => ref.invalidate(rideProvider(rideId)),
         data: (ride) {
           if (ride == null) {
-            return const Center(
+            return Center(
               child: EmptyState(
                 icon: Icons.directions_bike_outlined,
-                title: 'Поїздку не знайдено',
-                description: 'Можливо, її вже було видалено.',
+                title: t.rideNotFoundTitle,
+                description: t.rideNotFoundDescription,
               ),
             );
           }
 
           final achievements = <String>[
-            if (records.longest?.id == ride.id) 'Найдовша поїздка',
-            if (records.fastest?.id == ride.id) 'Найвища середня швидкість',
-            if (records.longestByTime?.id == ride.id) 'Найдовший час у русі',
+            if (records.longest?.id == ride.id) t.longestRideAchievement,
+            if (records.fastest?.id == ride.id)
+              t.highestAverageSpeedAchievement,
+            if (records.longestByTime?.id == ride.id)
+              t.longestMovingTimeAchievement,
           ];
 
           return SafeArea(
@@ -132,18 +148,20 @@ class RideDetailScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RideSummaryHeader(
-                    distance: units.formatDistance(ride.distanceMeters),
+                    distance: units.formatDistance(ride.distanceMeters, t),
                     startedAt: formatStartedAt(
                       ride.startedAt,
+                      locale: t.localeName,
                       includeTime: true,
                     ),
                   ),
                   const SizedBox(height: 16),
-
                   AsyncValueView(
                     value: routeAsync,
                     stateHeight: RouteMap.defaultHeight,
-                    errorTitle: 'Не вдалося завантажити маршрут',
+                    errorTitle: t.routeLoadError,
+                    retryDescription: t.tryAgainLater,
+                    retryLabel: t.tryAgain,
                     onRetry: () =>
                         ref.invalidate(simplifiedRouteProvider(rideId)),
                     data: (route) => RouteMap(
@@ -154,51 +172,50 @@ class RideDetailScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-
                   if (achievements.isNotEmpty) ...[
                     const SizedBox(height: 24),
-                    Text('Досягнення', style: theme.textTheme.titleMedium),
+                    Text(t.achievements, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Column(
                           children: [
-                            for (final a in achievements)
-                              AchievementCard(label: a),
+                            for (final achievement in achievements)
+                              AchievementCard(label: achievement),
                           ],
                         ),
                       ),
                     ),
                   ],
-
                   const SizedBox(height: 24),
-                  Text('Показники', style: theme.textTheme.titleMedium),
+                  Text(t.stats, style: theme.textTheme.titleMedium),
                   const SizedBox(height: 8),
-
                   StatRow(
                     icon: Icons.timer_outlined,
-                    label: 'Час у русі',
+                    label: t.movingTime,
                     value: formatDuration(
                       Duration(milliseconds: ride.movingTimeMs),
+                      t,
                     ),
                   ),
                   StatRow(
                     icon: Icons.schedule,
-                    label: 'Загальний час',
+                    label: t.totalTime,
                     value: formatDuration(
                       Duration(milliseconds: ride.elapsedTimeMs),
+                      t,
                     ),
                   ),
                   StatRow(
                     icon: Icons.speed,
-                    label: 'Середня швидкість',
-                    value: units.formatSpeed(ride.avgSpeedMps),
+                    label: t.averageSpeed,
+                    value: units.formatSpeed(ride.avgSpeedMps, t),
                   ),
                   StatRow(
                     icon: Icons.bolt,
-                    label: 'Максимальна швидкість',
-                    value: units.formatSpeed(ride.maxSpeedMps),
+                    label: t.maximumSpeed,
+                    value: units.formatSpeed(ride.maxSpeedMps, t),
                   ),
                 ],
               ),
