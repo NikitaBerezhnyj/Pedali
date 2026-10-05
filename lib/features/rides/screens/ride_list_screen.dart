@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/utils/format.dart';
+import 'package:pedali/core/utils/units.dart';
+import 'package:pedali/core/widgets/app_header.dart';
+import 'package:pedali/core/widgets/app_list_card.dart';
+import 'package:pedali/core/widgets/async_value_view.dart';
 import 'package:pedali/core/widgets/empty_state.dart';
 import 'package:pedali/features/recording/providers/recorder_controller_provider.dart';
-import 'package:pedali/features/rides/providers/finished_rides_provider.dart';
-import 'package:pedali/features/rides/widgets/ride_card.dart';
-import 'package:pedali/features/settings/providers/units_provider.dart';
-import 'package:pedali/core/utils/units.dart';
-import 'package:pedali/core/widgets/app_button.dart';
-import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/features/recording/screens/recording_screen.dart';
+import 'package:pedali/features/rides/providers/finished_rides_provider.dart';
 import 'package:pedali/features/rides/screens/ride_detail_screen.dart';
+import 'package:pedali/features/settings/providers/units_provider.dart';
 import 'package:pedali/features/settings/screens/settings_screen.dart';
 import 'package:pedali/features/stats/screens/stats_screen.dart';
+import 'package:pedali/theme/app_tokens.dart';
 
 class RideListScreen extends ConsumerStatefulWidget {
   const RideListScreen({super.key});
+
   @override
   ConsumerState<RideListScreen> createState() => _RideListScreenState();
 }
@@ -52,11 +54,14 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
         ),
         actions: [
           TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(ctx).colorScheme.error,
+            ),
             onPressed: () => Navigator.pop(ctx, false),
             child: const Text('Видалити'),
           ),
           FilledButton(
+            style: FilledButton.styleFrom(minimumSize: const Size(0, 40)),
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Продовжити'),
           ),
@@ -73,11 +78,10 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
         context,
         MaterialPageRoute(builder: (_) => const RecordingScreen()),
       );
-      ref.invalidate(finishedRidesProvider);
     } else {
       await controller.discardStaleRide(stale);
-      ref.invalidate(finishedRidesProvider);
     }
+    ref.invalidate(finishedRidesProvider);
   }
 
   String _formatAgo(Duration d) {
@@ -87,12 +91,15 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     return 'щойно';
   }
 
-  Future<void> _openStats() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const StatsScreen()),
-    );
-  }
+  Future<void> _openStats() => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const StatsScreen()),
+  );
+
+  Future<void> _openSettings() => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const SettingsScreen()),
+  );
 
   Future<void> _startRide() async {
     await ref.read(recorderControllerProvider.notifier).start();
@@ -104,27 +111,30 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     ref.invalidate(finishedRidesProvider);
   }
 
-  Future<void> _openSettings() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const SettingsScreen()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     final units = ref.watch(unitsProvider);
-    final ridesAsync = ref.watch(finishedRidesProvider);
+
     return Scaffold(
       appBar: AppHeader(
-        action: IconButton(
-          icon: const Icon(Icons.settings),
-          onPressed: _openSettings,
-        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            tooltip: 'Статистика',
+            onPressed: _openStats,
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Налаштування',
+            onPressed: _openSettings,
+          ),
+        ],
       ),
-      body: ridesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Помилка: $e')),
+      body: AsyncValueView(
+        value: ref.watch(finishedRidesProvider),
+        onRetry: () => ref.invalidate(finishedRidesProvider),
         data: (rides) {
           if (rides.isEmpty) {
             return const Center(
@@ -135,16 +145,28 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
               ),
             );
           }
+
           return ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.md),
             itemCount: rides.length,
             itemBuilder: (context, i) {
               final ride = rides[i];
-              return RideCard(
-                distance: units.formatDistance(ride.distanceMeters),
+
+              return AppListCard(
+                title: units.formatDistance(ride.distanceMeters),
                 subtitle:
-                    '${formatDuration(Duration(milliseconds: ride.movingTimeMs))} • '
-                    '${units.formatSpeed(ride.avgSpeedMps)}',
+                    '${formatStartedAt(ride.startedAt)} • '
+                    '${formatDuration(Duration(milliseconds: ride.movingTimeMs))}',
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      units.formatSpeed(ride.avgSpeedMps),
+                      style: theme.textTheme.titleSmall,
+                    ),
+                    Icon(Icons.chevron_right, color: cs.onSurfaceVariant),
+                  ],
+                ),
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -156,24 +178,23 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
           );
         },
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            OutlineButton(
-              label: 'Статистика',
-              icon: Icons.bar_chart,
-              onPressed: _openStats,
-            ),
-            const SizedBox(height: 8),
-            PrimaryButton(
-              label: 'Почати поїздку',
-              icon: Icons.directions_bike,
+
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.sm,
+            AppSpacing.md,
+            AppSpacing.md,
+          ),
+          child: SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
               onPressed: _startRide,
+              icon: const Icon(Icons.directions_bike),
+              label: const Text('Почати поїздку'),
             ),
-          ],
+          ),
         ),
       ),
     );

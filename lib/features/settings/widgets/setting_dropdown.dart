@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pedali/theme/app_tokens.dart';
 
 class SettingsDropdown<T> extends StatelessWidget {
   const SettingsDropdown({
@@ -23,7 +24,7 @@ class SettingsDropdown<T> extends StatelessWidget {
           label,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.sm),
         DropdownButtonFormField<T>(
           initialValue: value,
           items: items,

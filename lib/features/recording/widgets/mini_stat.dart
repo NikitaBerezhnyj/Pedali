@@ -12,13 +12,13 @@ class MiniStat extends StatelessWidget {
 
     return Column(
       children: [
+        Text(value, style: theme.textTheme.titleSmall),
         Text(
-          value,
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w600,
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        Text(label, style: theme.textTheme.bodySmall),
       ],
     );
   }

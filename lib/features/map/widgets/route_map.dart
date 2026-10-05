@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:pedali/core/widgets/empty_state.dart';
 import 'package:pedali/features/map/widgets/app_tile_layer.dart';
 import 'package:pedali/features/map/widgets/route_endpoints_layer.dart';
+import 'package:pedali/theme/app_tokens.dart';
 
 class RoutePolylineLayer extends StatelessWidget {
   const RoutePolylineLayer({super.key, required this.segments});
@@ -48,7 +49,7 @@ class RouteMap extends StatelessWidget {
       return Container(
         height: height,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.md,
           color: theme.colorScheme.surfaceContainerLow,
         ),
         child: Center(
@@ -74,7 +75,7 @@ class RouteMap extends StatelessWidget {
     return SizedBox(
       height: height,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.md,
         child: Stack(
           children: [
             FlutterMap(

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedali/core/utils/format.dart';
-import 'package:pedali/core/widgets/empty_state.dart';
-import 'package:pedali/features/stats/providers/monthly_stats_provider.dart';
-import 'package:pedali/features/rides/providers/records_provider.dart';
-import 'package:pedali/features/settings/providers/units_provider.dart';
 import 'package:pedali/core/utils/units.dart';
 import 'package:pedali/core/widgets/app_header.dart';
-import 'package:pedali/features/stats/widgets/month_card.dart';
-import 'package:pedali/features/stats/widgets/record_card.dart';
+import 'package:pedali/core/widgets/app_list_card.dart';
+import 'package:pedali/core/widgets/async_value_view.dart';
+import 'package:pedali/core/widgets/empty_state.dart';
+import 'package:pedali/features/rides/providers/records_provider.dart';
+import 'package:pedali/features/settings/providers/units_provider.dart';
+import 'package:pedali/features/stats/providers/monthly_stats_provider.dart';
+import 'package:pedali/features/stats/widgets/record_tile.dart';
 
 const _monthNames = [
   '',
@@ -34,6 +35,7 @@ String _monthLabel(String key) {
 
 class StatsScreen extends ConsumerWidget {
   const StatsScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -62,56 +64,50 @@ class StatsScreen extends ConsumerWidget {
               children: [
                 Text('Рекорди', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
-                Column(
-                  children: [
-                    RecordCard(
-                      icon: Icons.straighten,
-                      label: 'Найдовша поїздка',
-                      ride: records.longest,
-                      valueBuilder: (r) =>
-                          units.formatDistance(r.distanceMeters),
-                    ),
-                    RecordCard(
-                      icon: Icons.speed,
-                      label: 'Найшвидша поїздка',
-                      ride: records.fastest,
-                      valueBuilder: (r) => units.formatSpeed(r.avgSpeedMps),
-                    ),
-                    RecordCard(
-                      icon: Icons.timer,
-                      label: 'Найдовша за часом',
-                      ride: records.longestByTime,
-                      valueBuilder: (r) => formatDuration(
-                        Duration(milliseconds: r.movingTimeMs),
-                      ),
-                    ),
-                  ],
+                RecordTile(
+                  icon: Icons.straighten,
+                  label: 'Найдовша поїздка',
+                  ride: records.longest,
+                  valueBuilder: (r) => units.formatDistance(r.distanceMeters),
                 ),
-                const SizedBox(height: 24),
-
+                RecordTile(
+                  icon: Icons.speed,
+                  label: 'Найшвидша поїздка',
+                  ride: records.fastest,
+                  valueBuilder: (r) => units.formatSpeed(r.avgSpeedMps),
+                ),
+                RecordTile(
+                  icon: Icons.timer_outlined,
+                  label: 'Найдовша за часом',
+                  ride: records.longestByTime,
+                  valueBuilder: (r) =>
+                      formatDuration(Duration(milliseconds: r.movingTimeMs)),
+                ),
+                const SizedBox(height: 16),
                 Text('По місяцях', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
-                monthly.when(
-                  loading: () => const CircularProgressIndicator(),
-                  error: (e, _) => Text('Помилка: $e'),
+                AsyncValueView(
+                  value: monthly,
+                  errorTitle: 'Не вдалося завантажити статистику',
+                  onRetry: () => ref.invalidate(monthlyStatsProvider),
                   data: (months) {
                     if (months.isEmpty) {
                       return const Text('Поки немає даних');
                     }
+
                     return Column(
-                      children: months
-                          .map(
-                            (month) => MonthCard(
-                              title: _monthLabel(month.monthKey),
-                              subtitle:
-                                  '${month.rideCount} поїздок • '
-                                  '${formatDuration(Duration(milliseconds: month.totalMovingTimeMs))}',
-                              distance: units.formatDistance(
-                                month.totalDistanceMeters,
-                              ),
-                            ),
-                          )
-                          .toList(),
+                      children: months.map((month) {
+                        return AppListCard(
+                          title: _monthLabel(month.monthKey),
+                          subtitle:
+                              '${month.rideCount} поїздок • '
+                              '${formatDuration(Duration(milliseconds: month.totalMovingTimeMs))}',
+                          trailing: Text(
+                            units.formatDistance(month.totalDistanceMeters),
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        );
+                      }).toList(),
                     );
                   },
                 ),

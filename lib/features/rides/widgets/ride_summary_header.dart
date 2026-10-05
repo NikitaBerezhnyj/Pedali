@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pedali/theme/app_tokens.dart';
 
 class RideSummaryHeader extends StatelessWidget {
   const RideSummaryHeader({
@@ -20,7 +21,7 @@ class RideSummaryHeader extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.lg,
       ),
       child: Row(
         children: [
@@ -29,7 +30,7 @@ class RideSummaryHeader extends StatelessWidget {
             height: 56,
             decoration: BoxDecoration(
               color: colorScheme.onPrimaryContainer.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: AppRadius.md,
             ),
             child: Icon(
               Icons.directions_bike,

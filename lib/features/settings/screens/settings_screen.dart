@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pedali/features/map/domain/tile_config.dart';
-import 'package:pedali/features/map/domain/map_style.dart';
-import 'package:pedali/features/settings/providers/keep_screen_on_provider.dart';
-import 'package:pedali/features/settings/providers/locale_provider.dart';
-import 'package:pedali/features/map/providers/map_style_provider.dart';
-import 'package:pedali/features/settings/providers/theme_provider.dart';
-import 'package:pedali/features/settings/providers/units_provider.dart';
 import 'package:pedali/core/utils/units.dart';
 import 'package:pedali/core/widgets/app_header.dart';
+import 'package:pedali/features/map/domain/map_style.dart';
+import 'package:pedali/features/map/domain/tile_config.dart';
+import 'package:pedali/features/map/providers/map_style_provider.dart';
+import 'package:pedali/features/settings/providers/keep_screen_on_provider.dart';
+import 'package:pedali/features/settings/providers/locale_provider.dart';
+import 'package:pedali/features/settings/providers/theme_provider.dart';
+import 'package:pedali/features/settings/providers/units_provider.dart';
 import 'package:pedali/features/settings/widgets/setting_dropdown.dart';
 import 'package:pedali/l10n/app_localizations.dart';
+import 'package:pedali/theme/app_tokens.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -39,7 +40,7 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppHeader(title: 'Налаштування', showBackButton: true),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -62,8 +63,7 @@ class SettingsScreen extends ConsumerWidget {
                     .setLocale(supportedLocales[language]!);
               },
             ),
-            const SizedBox(height: 24),
-
+            const SizedBox(height: AppSpacing.lg),
             SettingsDropdown<ThemeMode>(
               label: t.themeLabel,
               value: theme,
@@ -87,8 +87,7 @@ class SettingsScreen extends ConsumerWidget {
                 ref.read(themeProvider.notifier).setTheme(mode);
               },
             ),
-            const SizedBox(height: 24),
-
+            const SizedBox(height: AppSpacing.lg),
             SettingsDropdown<MapStyle>(
               label: 'Стиль мапи',
               value: ref.watch(mapStyleProvider),
@@ -106,8 +105,7 @@ class SettingsScreen extends ConsumerWidget {
                 ref.read(mapStyleProvider.notifier).setStyle(style);
               },
             ),
-            const SizedBox(height: 24),
-
+            const SizedBox(height: AppSpacing.lg),
             SettingsDropdown<UnitSystem>(
               label: 'Одиниці',
               value: ref.watch(unitsProvider),
@@ -127,13 +125,12 @@ class SettingsScreen extends ConsumerWidget {
                 ref.read(unitsProvider.notifier).setUnits(units);
               },
             ),
-            const SizedBox(height: 24),
-
+            const SizedBox(height: AppSpacing.lg),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text(
+              title: Text(
                 'Не вимикати екран під час запису',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               subtitle: const Text('Витрачає більше заряду батареї'),
               value: ref.watch(keepScreenOnProvider),

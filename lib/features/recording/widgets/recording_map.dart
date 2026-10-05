@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pedali/features/map/widgets/app_tile_layer.dart';
 import 'package:pedali/features/map/widgets/position_marker.dart';
+import 'package:pedali/features/map/widgets/route_map.dart';
 
 class RecordingMap extends StatelessWidget {
   const RecordingMap({
@@ -22,8 +23,6 @@ class RecordingMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return FlutterMap(
       mapController: mapController,
       options: MapOptions(
@@ -33,16 +32,7 @@ class RecordingMap extends StatelessWidget {
       ),
       children: [
         const AppTileLayer(),
-        if (trackPoints.length > 1)
-          PolylineLayer(
-            polylines: [
-              Polyline(
-                points: trackPoints,
-                strokeWidth: 4,
-                color: colorScheme.primary,
-              ),
-            ],
-          ),
+        RoutePolylineLayer(segments: [trackPoints]),
         if (currentPosition != null)
           PositionMarkerLayer(position: currentPosition!),
         const AppMapAttribution(),

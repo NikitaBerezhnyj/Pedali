@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:pedali/theme/app_tokens.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback onFinish;
@@ -68,12 +69,12 @@ class _SplashScreenState extends State<SplashScreen>
                 );
               },
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: AppRadius.xl,
                 child: Container(
                   color: theme.cardColor,
                   padding: const EdgeInsets.all(8),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: AppRadius.lg,
                     child: Image.asset(
                       'assets/icon.png',
                       width: 150,

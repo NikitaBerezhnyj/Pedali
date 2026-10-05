@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:pedali/core/widgets/app_circle_button.dart';
+import 'package:pedali/core/widgets/show_confirm_dialog.dart';
+import 'package:pedali/features/recording/domain/recorder_state.dart';
 import 'package:pedali/features/recording/providers/recorder_controller_provider.dart';
 import 'package:pedali/features/recording/widgets/recording_map.dart';
 import 'package:pedali/features/recording/widgets/recording_panel.dart';
-import 'package:pedali/features/recording/widgets/round_icon_button.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pedali/features/settings/providers/units_provider.dart';
 import 'package:pedali/features/settings/providers/keep_screen_on_provider.dart';
-import 'package:pedali/core/utils/units.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:pedali/features/settings/providers/units_provider.dart';
+import 'package:pedali/theme/app_tokens.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class RecordingScreen extends ConsumerStatefulWidget {
   const RecordingScreen({super.key});
@@ -38,68 +40,53 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
     super.dispose();
   }
 
+  bool _isActive(RecorderStatus status) =>
+      status == RecorderStatus.recording ||
+      status == RecorderStatus.paused ||
+      status == RecorderStatus.autoPaused;
+
   void _recenter(LatLng? position) {
     if (position == null) return;
     setState(() => _followMe = true);
     _mapController.move(position, _mapController.camera.zoom);
   }
 
-  Future<void> _confirmStop(BuildContext context, WidgetRef ref) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Завершити поїздку?'),
-        content: const Text('Запис зупиниться і поїздку буде збережено.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Скасувати'),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Завершити'),
-          ),
-        ],
-      ),
+  Future<void> _confirmStop() async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Завершити поїздку?',
+      message: 'Запис зупиниться і поїздку буде збережено.',
+      confirmLabel: 'Завершити',
+      destructive: true,
     );
 
-    if (confirmed != true || !context.mounted) return;
+    if (!confirmed || !mounted) return;
 
     final controller = ref.read(recorderControllerProvider.notifier);
 
     await controller.stop();
-    if (!context.mounted) return;
+    if (!mounted) return;
 
-    if (!controller.isSavable) {
-      final keep = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Дуже коротка поїздка'),
-          content: const Text('Зберегти її все одно?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Видалити'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Зберегти'),
-            ),
-          ],
-        ),
+    if (controller.isSavable) {
+      controller.acknowledgeSaved();
+    } else {
+      final keep = await showConfirmDialog(
+        context,
+        title: 'Дуже коротка поїздка',
+        message: 'Зберегти її все одно?',
+        confirmLabel: 'Зберегти',
+        cancelLabel: 'Видалити',
+        barrierDismissible: false,
       );
 
-      if (keep == false) {
-        await controller.discardLastRide();
-      } else {
+      if (keep) {
         controller.acknowledgeSaved();
+      } else {
+        await controller.discardLastRide();
       }
-    } else {
-      controller.acknowledgeSaved();
     }
 
-    if (context.mounted) Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -115,70 +102,67 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
     });
 
     final screenHeight = MediaQuery.of(context).size.height;
-    const gapAboveSheet = 16.0;
+    const gapAboveSheet = AppSpacing.md;
 
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          RecordingMap(
-            mapController: _mapController,
-            initialPosition: s.currentPosition ?? const LatLng(50.45, 30.52),
-            trackPoints: s.trackPoints,
-            currentPosition: s.currentPosition,
-            onPositionChanged: (position, hasGesture) {
-              if (hasGesture && _followMe) {
-                setState(() => _followMe = false);
-              }
-            },
-          ),
-
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 8,
-            left: 12,
-            child: RoundIconButton(
-              icon: Icons.arrow_back,
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-
-          if (!_followMe)
-            AnimatedBuilder(
-              animation: _sheetController,
-              builder: (context, child) {
-                final sheetExtent = _sheetController.isAttached
-                    ? _sheetController.size
-                    : RecordingPanel.sheetInitial;
-
-                return Positioned(
-                  right: 12,
-                  bottom: screenHeight * sheetExtent + gapAboveSheet,
-                  child: child!,
-                );
+    return PopScope(
+      canPop: !_isActive(s.status),
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _confirmStop();
+      },
+      child: Scaffold(
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            RecordingMap(
+              mapController: _mapController,
+              initialPosition: s.currentPosition ?? const LatLng(50.45, 30.52),
+              trackPoints: s.trackPoints,
+              currentPosition: s.currentPosition,
+              onPositionChanged: (position, hasGesture) {
+                if (hasGesture && _followMe) {
+                  setState(() => _followMe = false);
+                }
               },
-              child: RoundIconButton(
-                icon: Icons.my_location,
-                onPressed: () => _recenter(s.currentPosition),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).padding.top + AppSpacing.sm,
+              left: 12,
+              child: AppCircleButton(
+                icon: Icons.arrow_back,
+                tooltip: 'Назад',
+                onPressed: () => Navigator.maybePop(context),
               ),
             ),
+            if (!_followMe)
+              AnimatedBuilder(
+                animation: _sheetController,
+                builder: (context, child) {
+                  final sheetExtent = _sheetController.isAttached
+                      ? _sheetController.size
+                      : RecordingPanel.sheetInitial;
 
-          RecordingPanel(
-            sheetController: _sheetController,
-            status: s.status,
-            currentSpeed: s.currentSpeedMps,
-            speedUnit: units == UnitSystem.imperial ? 'mph' : 'km/h',
-            distance: units.formatDistance(s.distanceMeters),
-            movingTime: s.movingTime,
-            elapsedTime: s.elapsedTime,
-            avgSpeed: units.formatSpeed(s.avgSpeedMps),
-            maxSpeed: units.formatSpeed(s.maxSpeedMps),
-            gpsAccuracy: s.gpsAccuracy,
-            message: s.message,
-            onPause: c.pause,
-            onResume: c.resume,
-            onStop: () => _confirmStop(context, ref),
-          ),
-        ],
+                  return Positioned(
+                    right: 12,
+                    bottom: screenHeight * sheetExtent + gapAboveSheet,
+                    child: child!,
+                  );
+                },
+                child: AppCircleButton(
+                  icon: Icons.my_location,
+                  tooltip: 'До моєї позиції',
+                  onPressed: () => _recenter(s.currentPosition),
+                ),
+              ),
+            RecordingPanel(
+              sheetController: _sheetController,
+              state: s,
+              units: units,
+              onPause: c.pause,
+              onResume: c.resume,
+              onStop: _confirmStop,
+            ),
+          ],
+        ),
       ),
     );
   }

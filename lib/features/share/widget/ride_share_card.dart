@@ -12,15 +12,16 @@ class RideShareCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final tt = Theme.of(context).textTheme;
+    final bg = AppTheme.seed.shade800;
+    final soft = AppTheme.seed.shade100;
 
     return MediaQuery.withNoTextScaling(
       child: SizedBox(
         width: size,
         height: size,
         child: ColoredBox(
-          color: cs.surface,
+          color: bg,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -32,21 +33,17 @@ class RideShareCard extends StatelessWidget {
                       width: 28,
                       height: 28,
                       decoration: BoxDecoration(
-                        color: AppTheme.seed,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       alignment: Alignment.center,
-                      child: Icon(
-                        Icons.directions_bike,
-                        size: 17,
-                        color: cs.onPrimary,
-                      ),
+                      child: Icon(Icons.directions_bike, size: 17, color: bg),
                     ),
                     const SizedBox(width: 10),
                     Text(
                       'PEDALI',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: AppTheme.seed,
+                      style: tt.labelLarge?.copyWith(
+                        color: Colors.white,
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 3,
@@ -55,10 +52,7 @@ class RideShareCard extends StatelessWidget {
                     const Spacer(),
                     Text(
                       data.date,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: cs.onSurfaceVariant,
-                        fontSize: 12,
-                      ),
+                      style: tt.bodySmall?.copyWith(color: soft, fontSize: 12),
                     ),
                   ],
                 ),
@@ -69,9 +63,9 @@ class RideShareCard extends StatelessWidget {
                       child: CustomPaint(
                         painter: RoutePainter(
                           segments: data.segments,
-                          color: AppTheme.seed,
-                          startColor: cs.onSurface,
-                          endColor: AppTheme.seed,
+                          color: Colors.white,
+                          startColor: bg,
+                          endColor: Colors.white,
                         ),
                       ),
                     ),
@@ -79,8 +73,8 @@ class RideShareCard extends StatelessWidget {
                 ),
                 Text(
                   data.distance,
-                  style: theme.textTheme.displaySmall?.copyWith(
-                    color: cs.onSurface,
+                  style: tt.displaySmall?.copyWith(
+                    color: Colors.white,
                     fontSize: 40,
                     fontWeight: FontWeight.w800,
                     height: 1,
@@ -111,8 +105,7 @@ class _Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final tt = Theme.of(context).textTheme;
 
     return Expanded(
       child: Column(
@@ -120,8 +113,8 @@ class _Stat extends StatelessWidget {
         children: [
           Text(
             label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: cs.onSurfaceVariant,
+            style: tt.labelSmall?.copyWith(
+              color: AppTheme.seed.shade100,
               fontSize: 10,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
@@ -132,8 +125,8 @@ class _Stat extends StatelessWidget {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: cs.onSurface,
+            style: tt.titleMedium?.copyWith(
+              color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w700,
             ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pedali/core/widgets/app_circle_button.dart';
 import 'package:pedali/features/recording/domain/recorder_state.dart';
-import 'circle_action_button.dart';
 
 class RecordingControls extends StatelessWidget {
   const RecordingControls({
@@ -18,41 +18,44 @@ class RecordingControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final errorColor = Theme.of(context).colorScheme.error;
+    final stop = AppCircleButton(
+      icon: Icons.stop,
+      variant: AppCircleButtonVariant.destructive,
+      tooltip: 'Завершити',
+      onPressed: onStop,
+    );
 
     switch (status) {
       case RecorderStatus.recording:
         return Row(
           children: [
-            CircleActionButton(icon: Icons.pause, onPressed: onPause),
-            const SizedBox(width: 8),
-            CircleActionButton(
-              icon: Icons.stop,
-              color: errorColor,
-              onPressed: onStop,
+            AppCircleButton(
+              icon: Icons.pause,
+              variant: AppCircleButtonVariant.tonal,
+              tooltip: 'Пауза',
+              onPressed: onPause,
             ),
+            const SizedBox(width: 8),
+            stop,
           ],
         );
 
       case RecorderStatus.paused:
         return Row(
           children: [
-            CircleActionButton(icon: Icons.play_arrow, onPressed: onResume),
-            const SizedBox(width: 8),
-            CircleActionButton(
-              icon: Icons.stop,
-              color: errorColor,
-              onPressed: onStop,
+            AppCircleButton(
+              icon: Icons.play_arrow,
+              variant: AppCircleButtonVariant.tonal,
+              tooltip: 'Продовжити',
+              onPressed: onResume,
             ),
+            const SizedBox(width: 8),
+            stop,
           ],
         );
 
       case RecorderStatus.autoPaused:
-        return CircleActionButton(
-          icon: Icons.stop,
-          color: errorColor,
-          onPressed: onStop,
-        );
+        return stop;
 
       default:
         return const SizedBox.shrink();

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pedali/core/widgets/app_button.dart';
 import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/features/share/domain/ride_share_service.dart';
 import 'package:pedali/features/share/domain/share_card_data.dart';
 import 'package:pedali/features/share/widget/ride_share_card.dart';
+import 'package:pedali/theme/app_tokens.dart';
 
 class RideShareScreen extends ConsumerStatefulWidget {
   const RideShareScreen({super.key, required this.data});
@@ -44,16 +44,13 @@ class _RideShareScreenState extends ConsumerState<RideShareScreen> {
         const SnackBar(content: Text('Не вдалося підготувати картинку')),
       );
     } finally {
-      if (mounted) {
-        setState(() => _busy = false);
-      }
+      if (mounted) setState(() => _busy = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cs = theme.colorScheme;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: const AppHeader(
@@ -66,27 +63,17 @@ class _RideShareScreenState extends ConsumerState<RideShareScreen> {
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
                 child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: cs.shadow.withValues(alpha: 0.16),
-                          blurRadius: 28,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: FittedBox(
-                        child: RepaintBoundary(
-                          key: _boundaryKey,
-                          child: RideShareCard(data: widget.data),
-                        ),
+                  child: Material(
+                    elevation: 4,
+                    shadowColor: cs.shadow,
+                    borderRadius: AppRadius.lg,
+                    clipBehavior: Clip.antiAlias,
+                    child: FittedBox(
+                      child: RepaintBoundary(
+                        key: _boundaryKey,
+                        child: RideShareCard(data: widget.data),
                       ),
                     ),
                   ),
@@ -94,11 +81,19 @@ class _RideShareScreenState extends ConsumerState<RideShareScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: PrimaryButton(
-                label: 'Поділитися',
-                icon: _busy ? Icons.hourglass_empty : Icons.ios_share,
-                onPressed: _busy ? null : _share,
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: _busy ? null : _share,
+                  icon: _busy
+                      ? const SizedBox.square(
+                          dimension: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.ios_share),
+                  label: const Text('Поділитися'),
+                ),
               ),
             ),
           ],

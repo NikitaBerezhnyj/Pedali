@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:pedali/features/map/widgets/map_dot.dart';
 
 class RoutePainter extends CustomPainter {
   RoutePainter({
@@ -81,7 +81,7 @@ class RoutePainter extends CustomPainter {
     );
 
     void dot(Offset o, Color c) {
-      canvas.drawCircle(o, 8, Paint()..color = Colors.white);
+      canvas.drawCircle(o, 8, Paint()..color = MapDot.borderColor);
       canvas.drawCircle(o, 5.5, Paint()..color = c);
     }
 

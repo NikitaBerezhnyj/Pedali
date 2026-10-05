@@ -6,34 +6,32 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     this.title,
     this.showBackButton = false,
     this.onBack,
-    this.action,
+    this.actions,
   });
 
   final String? title;
   final bool showBackButton;
   final VoidCallback? onBack;
-  final Widget? action;
+  final List<Widget>? actions;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    final isDefault = title == null && !showBackButton;
+    final isBrand = title == null && !showBackButton;
 
     return AppBar(
       automaticallyImplyLeading: false,
-      leading: showBackButton
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: onBack ?? () => Navigator.pop(context),
-            )
-          : null,
-      title: isDefault
+      leading: showBackButton ? BackButton(onPressed: onBack) : null,
+      title: isBrand
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.directions_bike),
+                Icon(
+                  Icons.directions_bike,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 const Text('Pedali'),
               ],
@@ -41,7 +39,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           : title == null
           ? null
           : Text(title!),
-      actions: action == null ? null : [action!],
+      actions: actions,
     );
   }
 }
