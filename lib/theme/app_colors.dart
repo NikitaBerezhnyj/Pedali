@@ -17,15 +17,15 @@ class AppColors extends ThemeExtension<AppColors> {
   static const light = AppColors(
     success: Color(0xFF2E7D32),
     warning: Color(0xFF9A5B00),
-    mapStart: Color(0xFF2E7D32),
-    mapEnd: Color(0xFFC62828),
+    mapStart: Color(0xFFFFFFFF),
+    mapEnd: Color(0xFFFF6D00),
   );
 
   static const dark = AppColors(
     success: Color(0xFF81C784),
     warning: Color(0xFFFFB74D),
-    mapStart: Color(0xFF81C784),
-    mapEnd: Color(0xFFEF5350),
+    mapStart: Color(0xFFFFFFFF),
+    mapEnd: Color(0xFFFFB74D),
   );
 
   @override
