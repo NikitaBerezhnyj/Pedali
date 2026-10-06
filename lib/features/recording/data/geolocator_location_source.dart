@@ -1,6 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:pedali/features/recording/domain/location_source.dart';
-import 'package:pedali/features/rides/domain/gps_track_oint.dart';
+import 'package:pedali/features/rides/domain/gps_track_point.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class GeolocatorLocationSource implements LocationSource {

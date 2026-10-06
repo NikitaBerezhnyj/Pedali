@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:pedali/core/db/app_database.dart';
 import 'package:pedali/core/db/schema.dart';
 import 'package:pedali/features/rides/domain/ride_stats.dart';
-import 'package:pedali/features/rides/domain/gps_track_oint.dart';
+import 'package:pedali/features/rides/domain/gps_track_point.dart';
 
 class RideRepository {
   RideRepository(this._db);
