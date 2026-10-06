@@ -9,7 +9,7 @@ import 'package:pedali/features/recording/domain/location_source.dart';
 import 'package:pedali/features/recording/providers/location_source_provider.dart';
 import 'package:pedali/features/recording/domain/location_filter.dart';
 import 'package:pedali/features/recording/domain/ride_accumulator.dart';
-import 'package:pedali/features/rides/domain/gps_track_oint.dart';
+import 'package:pedali/features/rides/domain/gps_track_point.dart';
 import 'package:pedali/features/rides/providers/ride_repository_provider.dart';
 
 const _minSavableDistanceMeters = 100.0;
@@ -229,34 +229,32 @@ class RecorderController extends Notifier<RecorderState> {
   }
 
   void _onPoint(GPSTrackPoint p) {
-    final sample = GPSTrackPoint(
-      time: p.time,
-      lat: p.lat,
-      lon: p.lon,
-      accuracyMeters: p.accuracyMeters,
-      speedMps: p.speedMps,
-    );
-
     state = state.copyWith(
       currentSpeedMps: p.speedMps,
       gpsAccuracy: p.accuracyMeters,
     );
 
-    if (!_filter.accepts(sample)) {
+    if (!_filter.accepts(p)) {
       _registerBadSignal();
       return;
     }
 
-    final outcome = _accumulator.addPoint(sample);
+    if (state.status == RecorderStatus.autoPaused) {
+      _registerGoodSignal();
+      return;
+    }
+    if (state.status != RecorderStatus.recording) return;
+
+    final outcome = _accumulator.addPoint(p);
     if (outcome == PointOutcome.rejectedImplausible) {
       _registerBadSignal();
       return;
     }
 
     _registerGoodSignal();
-    _pendingPoints.add(sample);
+    _pendingPoints.add(p);
 
-    final position = LatLng(sample.lat, sample.lon);
+    final position = LatLng(p.lat, p.lon);
     final updatedTrack = [...state.trackPoints, position];
 
     final stats = _accumulator.stats;
