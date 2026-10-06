@@ -45,8 +45,8 @@ class _RouteFullscreenScreenState extends State<RouteFullscreenScreen> {
             mapController: _controller,
             options: MapOptions(
               initialCameraFit: _fit,
-              interactionOptions: InteractionOptions(
-                flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all,
               ),
             ),
             children: [
