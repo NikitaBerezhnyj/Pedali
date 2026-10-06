@@ -1,7 +1,7 @@
 import 'package:pedali/core/constants/app_constants.dart';
 import 'geo_math.dart';
 import '../../rides/domain/ride_stats.dart';
-import '../../rides/domain/gps_track_oint.dart';
+import '../../rides/domain/gps_track_point.dart';
 
 enum PointOutcome { accepted, ignoredStationary, rejectedImplausible }
 
@@ -68,7 +68,10 @@ class RideAccumulator {
       _movingTime += Duration(milliseconds: (dtSeconds * 1000).round());
     }
 
-    final speedForMax = sample.speedMps ?? impliedSpeedMps;
+    final reported = sample.speedMps;
+    final speedForMax = (reported == null || reported == 0)
+        ? impliedSpeedMps
+        : reported;
 
     _recentSpeeds.add(speedForMax);
 
