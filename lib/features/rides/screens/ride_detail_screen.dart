@@ -15,7 +15,7 @@ import 'package:pedali/features/rides/providers/finished_rides_provider.dart';
 import 'package:pedali/features/rides/providers/records_provider.dart';
 import 'package:pedali/features/rides/providers/ride_provider.dart';
 import 'package:pedali/features/rides/providers/ride_repository_provider.dart';
-import 'package:pedali/features/rides/widgets/achievements_card.dart';
+import 'package:pedali/features/rides/widgets/record_row.dart';
 import 'package:pedali/features/rides/widgets/ride_summary_header.dart';
 import 'package:pedali/features/rides/widgets/stat_row.dart';
 import 'package:pedali/features/settings/providers/units_provider.dart';
@@ -63,7 +63,7 @@ class RideDetailScreen extends ConsumerWidget {
     Navigator.push(
       context,
       RideShareScreen.route(
-        ShareCardData(
+        RideShareCardData(
           segments: route,
           distance: units.formatDistance(ride.distanceMeters, t),
           movingTime: formatDuration(
@@ -132,12 +132,11 @@ class RideDetailScreen extends ConsumerWidget {
             );
           }
 
-          final achievements = <String>[
-            if (records.longest?.id == ride.id) t.longestRideAchievement,
-            if (records.fastest?.id == ride.id)
-              t.highestAverageSpeedAchievement,
-            if (records.longestByTime?.id == ride.id)
-              t.longestMovingTimeAchievement,
+          final recordLabels = <String>[
+            if (records.longestDistance?.id == ride.id) t.recordLongestDistance,
+            if (records.longestTime?.id == ride.id) t.recordLongestTime,
+            if (records.highestAvgSpeed?.id == ride.id) t.recordHighestAvgSpeed,
+            if (records.highestMaxSpeed?.id == ride.id) t.recordHighestMaxSpeed,
           ];
 
           return SafeArea(
@@ -172,17 +171,17 @@ class RideDetailScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  if (achievements.isNotEmpty) ...[
+                  if (recordLabels.isNotEmpty) ...[
                     const SizedBox(height: 24),
-                    Text(t.achievements, style: theme.textTheme.titleMedium),
+                    Text(t.recordsTitle, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Column(
                           children: [
-                            for (final achievement in achievements)
-                              AchievementCard(label: achievement),
+                            for (final label in recordLabels)
+                              RecordRow(label: label),
                           ],
                         ),
                       ),

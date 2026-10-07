@@ -34,14 +34,9 @@ class StatsScreen extends ConsumerWidget {
     final records = ref.watch(recordsProvider);
     final monthly = ref.watch(monthlyStatsProvider);
 
-    final hasStats =
-        records.longest != null ||
-        records.fastest != null ||
-        records.longestByTime != null;
-
     return Scaffold(
       appBar: AppHeader(title: t.statsTitle, showBackButton: true),
-      body: !hasStats
+      body: records.isEmpty
           ? Center(
               child: EmptyState(
                 icon: Icons.emoji_events_outlined,
@@ -56,29 +51,37 @@ class StatsScreen extends ConsumerWidget {
                 const SizedBox(height: 8),
                 RecordTile(
                   icon: Icons.straighten,
-                  label: t.longestRideLabel,
-                  ride: records.longest,
+                  label: t.recordLongestDistance,
+                  ride: records.longestDistance,
                   locale: locale,
                   valueBuilder: (ride) =>
                       units.formatDistance(ride.distanceMeters, t),
                 ),
                 RecordTile(
-                  icon: Icons.speed,
-                  label: t.fastestRideLabel,
-                  ride: records.fastest,
-                  locale: locale,
-                  valueBuilder: (ride) =>
-                      units.formatSpeed(ride.avgSpeedMps, t),
-                ),
-                RecordTile(
                   icon: Icons.timer_outlined,
-                  label: t.longestRideByTimeLabel,
-                  ride: records.longestByTime,
+                  label: t.recordLongestTime,
+                  ride: records.longestTime,
                   locale: locale,
                   valueBuilder: (ride) => formatDuration(
                     Duration(milliseconds: ride.movingTimeMs),
                     t,
                   ),
+                ),
+                RecordTile(
+                  icon: Icons.speed,
+                  label: t.recordHighestAvgSpeed,
+                  ride: records.highestAvgSpeed,
+                  locale: locale,
+                  valueBuilder: (ride) =>
+                      units.formatSpeed(ride.avgSpeedMps, t),
+                ),
+                RecordTile(
+                  icon: Icons.bolt,
+                  label: t.recordHighestMaxSpeed,
+                  ride: records.highestMaxSpeed,
+                  locale: locale,
+                  valueBuilder: (ride) =>
+                      units.formatSpeed(ride.maxSpeedMps, t),
                 ),
                 const SizedBox(height: 16),
                 Text(t.monthlyStatsTitle, style: theme.textTheme.titleMedium),

@@ -1,41 +1,42 @@
 import 'package:pedali/core/db/app_database.dart';
 
 class RideRecords {
-  const RideRecords({this.longest, this.fastest, this.longestByTime});
+  const RideRecords({
+    this.longestDistance,
+    this.longestTime,
+    this.highestAvgSpeed,
+    this.highestMaxSpeed,
+  });
 
   static const minDistanceForSpeedRecord = 1000.0;
 
-  final Ride? longest;
-  final Ride? fastest;
-  final Ride? longestByTime;
+  final Ride? longestDistance;
+  final Ride? longestTime;
+  final Ride? highestAvgSpeed;
+  final Ride? highestMaxSpeed;
+
+  bool get isEmpty =>
+      longestDistance == null &&
+      longestTime == null &&
+      highestAvgSpeed == null &&
+      highestMaxSpeed == null;
 
   factory RideRecords.fromRides(List<Ride> rides) {
-    if (rides.isEmpty) {
-      return const RideRecords();
-    }
-
-    final longest = rides.reduce(
-      (a, b) => a.distanceMeters > b.distanceMeters ? a : b,
-    );
-
-    final longestByTime = rides.reduce(
-      (a, b) => a.movingTimeMs > b.movingTimeMs ? a : b,
-    );
-
-    final fastestCandidates = rides.where(
+    final speedCandidates = rides.where(
       (ride) => ride.distanceMeters >= minDistanceForSpeedRecord,
     );
 
-    final fastest = fastestCandidates.isEmpty
-        ? null
-        : fastestCandidates.reduce(
-            (a, b) => a.avgSpeedMps > b.avgSpeedMps ? a : b,
-          );
-
     return RideRecords(
-      longest: longest,
-      fastest: fastest,
-      longestByTime: longestByTime,
+      longestDistance: _best(rides, (r) => r.distanceMeters),
+      longestTime: _best(rides, (r) => r.movingTimeMs),
+      highestAvgSpeed: _best(speedCandidates, (r) => r.avgSpeedMps),
+      highestMaxSpeed: _best(speedCandidates, (r) => r.maxSpeedMps),
     );
+  }
+
+  static Ride? _best(Iterable<Ride> rides, num Function(Ride ride) value) {
+    if (rides.isEmpty) return null;
+
+    return rides.reduce((a, b) => value(a) > value(b) ? a : b);
   }
 }

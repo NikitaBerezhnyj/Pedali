@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AchievementCard extends StatelessWidget {
-  const AchievementCard({super.key, required this.label});
+class RecordRow extends StatelessWidget {
+  const RecordRow({super.key, required this.label});
 
   final String label;
 
@@ -22,7 +22,7 @@ class AchievementCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              Icons.emoji_events_outlined,
+              Icons.military_tech_outlined,
               size: 20,
               color: cs.onPrimaryContainer,
             ),

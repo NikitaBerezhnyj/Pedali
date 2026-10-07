@@ -6,6 +6,7 @@ import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/core/widgets/app_list_card.dart';
 import 'package:pedali/core/widgets/async_value_view.dart';
 import 'package:pedali/core/widgets/empty_state.dart';
+import 'package:pedali/features/achievements/screens/achievements_screen.dart';
 import 'package:pedali/features/recording/providers/recorder_controller_provider.dart';
 import 'package:pedali/features/recording/screens/recording_screen.dart';
 import 'package:pedali/features/rides/providers/finished_rides_provider.dart';
@@ -122,6 +123,11 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     MaterialPageRoute(builder: (_) => const SettingsScreen()),
   );
 
+  Future<void> _openAchievements() => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const AchievementsScreen()),
+  );
+
   Future<void> _startRide() async {
     await ref.read(recorderControllerProvider.notifier).start();
 
@@ -145,6 +151,11 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     return Scaffold(
       appBar: AppHeader(
         actions: [
+          IconButton(
+            icon: const Icon(Icons.emoji_events_outlined),
+            tooltip: t.achievementsTitle,
+            onPressed: _openAchievements,
+          ),
           IconButton(
             icon: const Icon(Icons.bar_chart),
             tooltip: t.statistics,
