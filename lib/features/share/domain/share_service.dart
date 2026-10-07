@@ -7,8 +7,8 @@ import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-class RideShareService {
-  const RideShareService();
+class ShareService {
+  const ShareService();
 
   static const _targetWidthPx = 1080.0;
 

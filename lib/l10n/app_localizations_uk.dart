@@ -339,4 +339,114 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get mapStyleSatellite => 'Супутник';
+
+  @override
+  String get achievementsTitle => 'Досягнення';
+
+  @override
+  String get achievementSectionRideDistance => 'Дистанція за поїздку';
+
+  @override
+  String get achievementSectionTotalDistance => 'Загальна дистанція';
+
+  @override
+  String get achievementSectionRideCount => 'Кількість поїздок';
+
+  @override
+  String get achievementSectionMaxSpeed => 'Максимальна швидкість';
+
+  @override
+  String get achievementSectionRideDuration => 'Час у русі за поїздку';
+
+  @override
+  String achievementLabelKm(Object n) {
+    return '$n км';
+  }
+
+  @override
+  String achievementLabelKmh(Object n) {
+    return '$n км/год';
+  }
+
+  @override
+  String achievementLabelHours(Object n) {
+    return '$n год';
+  }
+
+  @override
+  String achievementLabelRides(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count поїздки',
+      many: '$count поїздок',
+      few: '$count поїздки',
+      one: '$count поїздка',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String achievementDescRideDistance(Object n) {
+    return 'Проїдьте $n км за одну поїздку';
+  }
+
+  @override
+  String achievementDescTotalDistance(Object n) {
+    return 'Проїдьте $n км загалом';
+  }
+
+  @override
+  String achievementDescRideCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count поїздки',
+      many: '$count поїздок',
+      few: '$count поїздки',
+      one: '$count поїздку',
+    );
+    return 'Завершіть $_temp0';
+  }
+
+  @override
+  String achievementDescMaxSpeed(Object n) {
+    return 'Розженіться до $n км/год';
+  }
+
+  @override
+  String achievementDescRideDuration(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count години',
+      many: '$count годин',
+      few: '$count години',
+      one: '$count годину',
+    );
+    return 'Будьте в русі $_temp0 за одну поїздку';
+  }
+
+  @override
+  String achievementProgress(Object current, Object target) {
+    return '$current / $target';
+  }
+
+  @override
+  String get achievementCompleted => 'Виконано';
+
+  @override
+  String get shareAchievementTitle => 'Поділитися досягненням';
+
+  @override
+  String get recordLongestDistance => 'Найдовша за відстанню';
+
+  @override
+  String get recordLongestTime => 'Найдовша за часом';
+
+  @override
+  String get recordHighestAvgSpeed => 'Найбільша середня швидкість';
+
+  @override
+  String get recordHighestMaxSpeed => 'Найбільша максимальна швидкість';
 }

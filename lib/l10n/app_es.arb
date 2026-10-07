@@ -11,7 +11,6 @@
   "milesLabel": "Millas",
   "keepScreenOnLabel": "Mantener la pantalla encendida durante la grabación",
   "keepScreenOnDescription": "Consume más batería",
-
   "statsTitle": "Statistiques",
   "statsEmptyTitle": "Vos records apparaîtront ici",
   "statsEmptyDescription": "Enregistrez votre première sortie pour commencer à suivre vos statistiques.",
@@ -33,14 +32,12 @@
       }
     }
   },
-
   "shareRideTitle": "Partager la sortie",
   "shareButton": "Partager",
   "shareImageError": "Impossible de préparer l’image",
   "shareMovingTimeLabel": "TEMPS EN MOUVEMENT",
   "shareAvgSpeedLabel": "VIT. MOYENNE",
   "shareMaxSpeedLabel": "VIT. MAXIMALE",
-
   "finishRideTitle": "Terminer la sortie ?",
   "finishRideMessage": "L’enregistrement s’arrêtera et la sortie sera enregistrée.",
   "finishRideConfirm": "Terminer",
@@ -68,7 +65,6 @@
   "elapsedTime": "Temps total",
   "averageSpeedShort": "Vit. moyenne",
   "maximumShort": "Max.",
-
   "deleteRideTitle": "Supprimer la sortie ?",
   "deleteRideMessage": "La sortie et son itinéraire seront définitivement supprimés.",
   "delete": "Supprimer",
@@ -108,18 +104,14 @@
   "rideListEmptyTitle": "À vélo !",
   "rideListEmptyDescription": "Enregistrez votre première sortie et elle apparaîtra ici.",
   "startRide": "Commencer la sortie",
-
   "routeNotVisibleTitle": "La ruta aún no está disponible",
   "routeNotVisibleDescription": "No hay suficientes puntos GPS en esta salida para mostrar la ruta.",
   "close": "Cerrar",
   "showFullRoute": "Mostrar toda la ruta",
-
   "tryAgainLater": "Inténtalo de nuevo más tarde.",
   "tryAgain": "Intentar de nuevo",
   "cancel": "Cancelar",
-
   "ridesLoadError": "No se pudieron cargar las salidas",
-
   "hourShort": " h",
   "minuteShort": " min",
   "secondShort": " s",
@@ -127,8 +119,29 @@
   "mileUnit": "mi",
   "kilometersPerHourUnit": "km/h",
   "milesPerHourUnit": "mph",
-
   "mapStyleCycling": "Ciclismo",
   "mapStyleTerrain": "Relieve",
-  "mapStyleSatellite": "Satélite"
+  "mapStyleSatellite": "Satélite",
+  "achievementsTitle": "Logros",
+  "achievementSectionRideDistance": "Distancia en un recorrido",
+  "achievementSectionTotalDistance": "Distancia total",
+  "achievementSectionRideCount": "Número de recorridos",
+  "achievementSectionMaxSpeed": "Velocidad máxima",
+  "achievementSectionRideDuration": "Tiempo en movimiento por recorrido",
+  "achievementLabelKm": "{n} km",
+  "achievementLabelKmh": "{n} km/h",
+  "achievementLabelHours": "{n} h",
+  "achievementLabelRides": "{count, plural, one{{count} recorrido} other{{count} recorridos}}",
+  "achievementDescRideDistance": "Recorre {n} km en un solo recorrido",
+  "achievementDescTotalDistance": "Recorre {n} km en total",
+  "achievementDescRideCount": "Completa {count, plural, one{{count} recorrido} other{{count} recorridos}}",
+  "achievementDescMaxSpeed": "Alcanza los {n} km/h",
+  "achievementDescRideDuration": "Pedalea durante {count, plural, one{{count} hora} other{{count} horas}} en un solo recorrido",
+  "achievementProgress": "{current} / {target}",
+  "achievementCompleted": "Completado",
+  "shareAchievementTitle": "Compartir logro",
+  "recordLongestDistance": "Más larga por distancia",
+  "recordLongestTime": "Más larga por tiempo",
+  "recordHighestAvgSpeed": "Mayor velocidad media",
+  "recordHighestMaxSpeed": "Mayor velocidad máxima"
 }

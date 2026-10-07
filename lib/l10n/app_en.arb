@@ -11,7 +11,6 @@
   "milesLabel": "Miles",
   "keepScreenOnLabel": "Keep screen on while recording",
   "keepScreenOnDescription": "Uses more battery power",
-
   "statsTitle": "Statistics",
   "statsEmptyTitle": "Your records will appear here",
   "statsEmptyDescription": "Record your first ride to start tracking your stats.",
@@ -33,14 +32,12 @@
       }
     }
   },
-
   "shareRideTitle": "Share ride",
   "shareButton": "Share",
   "shareImageError": "Couldn't prepare the image",
   "shareMovingTimeLabel": "MOVING TIME",
   "shareAvgSpeedLabel": "AVG. SPEED",
   "shareMaxSpeedLabel": "MAX. SPEED",
-
   "finishRideTitle": "Finish ride?",
   "finishRideMessage": "Recording will stop and the ride will be saved.",
   "finishRideConfirm": "Finish",
@@ -68,7 +65,6 @@
   "elapsedTime": "Total time",
   "averageSpeedShort": "Avg. speed",
   "maximumShort": "Max.",
-
   "deleteRideTitle": "Delete ride?",
   "deleteRideMessage": "The ride and its route will be permanently deleted.",
   "delete": "Delete",
@@ -108,18 +104,14 @@
   "rideListEmptyTitle": "Time to ride",
   "rideListEmptyDescription": "Record your first ride and it will appear here.",
   "startRide": "Start ride",
-
   "routeNotVisibleTitle": "Route not available yet",
   "routeNotVisibleDescription": "There aren't enough GPS points in this ride to display the route.",
   "close": "Close",
   "showFullRoute": "Show full route",
-
   "tryAgainLater": "Please try again later.",
   "tryAgain": "Try again",
   "cancel": "Cancel",
-
   "ridesLoadError": "Couldn't load rides",
-
   "hourShort": "h",
   "minuteShort": "m",
   "secondShort": "s",
@@ -127,8 +119,29 @@
   "mileUnit": "mi",
   "kilometersPerHourUnit": "km/h",
   "milesPerHourUnit": "mph",
-
   "mapStyleCycling": "Cycling",
   "mapStyleTerrain": "Terrain",
-  "mapStyleSatellite": "Satellite"
+  "mapStyleSatellite": "Satellite",
+  "achievementsTitle": "Achievements",
+  "achievementSectionRideDistance": "Distance in one ride",
+  "achievementSectionTotalDistance": "Total distance",
+  "achievementSectionRideCount": "Number of rides",
+  "achievementSectionMaxSpeed": "Top speed",
+  "achievementSectionRideDuration": "Moving time in one ride",
+  "achievementLabelKm": "{n} km",
+  "achievementLabelKmh": "{n} km/h",
+  "achievementLabelHours": "{n} h",
+  "achievementLabelRides": "{count, plural, one{{count} ride} other{{count} rides}}",
+  "achievementDescRideDistance": "Cover {n} km in a single ride",
+  "achievementDescTotalDistance": "Cover {n} km in total",
+  "achievementDescRideCount": "Complete {count, plural, one{{count} ride} other{{count} rides}}",
+  "achievementDescMaxSpeed": "Reach {n} km/h",
+  "achievementDescRideDuration": "Keep moving for {count, plural, one{{count} hour} other{{count} hours}} in a single ride",
+  "achievementProgress": "{current} / {target}",
+  "achievementCompleted": "Completed",
+  "shareAchievementTitle": "Share achievement",
+  "recordLongestDistance": "Longest by distance",
+  "recordLongestTime": "Longest by time",
+  "recordHighestAvgSpeed": "Highest average speed",
+  "recordHighestMaxSpeed": "Highest max speed"
 }

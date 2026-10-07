@@ -11,7 +11,6 @@
   "milesLabel": "Милі",
   "keepScreenOnLabel": "Не вимикати екран під час запису",
   "keepScreenOnDescription": "Збільшує витрату заряду батареї",
-
   "statsTitle": "Статистика",
   "statsEmptyTitle": "Тут будуть твої рекорди",
   "statsEmptyDescription": "Запиши свою першу поїздку, щоб почати збирати статистику.",
@@ -33,14 +32,12 @@
       }
     }
   },
-
   "shareRideTitle": "Поділитися поїздкою",
   "shareButton": "Поділитися",
   "shareImageError": "Не вдалося підготувати зображення",
   "shareMovingTimeLabel": "ЧАС У РУСІ",
   "shareAvgSpeedLabel": "СЕР. ШВИДКІСТЬ",
   "shareMaxSpeedLabel": "МАКС. ШВИДКІСТЬ",
-
   "finishRideTitle": "Завершити поїздку?",
   "finishRideMessage": "Запис зупиниться і поїздку буде збережено.",
   "finishRideConfirm": "Завершити",
@@ -68,7 +65,6 @@
   "elapsedTime": "Заг. час",
   "averageSpeedShort": "Сер. швидк.",
   "maximumShort": "Макс.",
-
   "deleteRideTitle": "Видалити поїздку?",
   "deleteRideMessage": "Поїздку разом із маршрутом буде видалено назавжди.",
   "delete": "Видалити",
@@ -108,18 +104,14 @@
   "rideListEmptyTitle": "Час вирушати",
   "rideListEmptyDescription": "Запиши свою першу поїздку, і вона зʼявиться тут.",
   "startRide": "Почати поїздку",
-
   "routeNotVisibleTitle": "Маршрут ще не видно",
   "routeNotVisibleDescription": "У цій поїздці замало GPS-точок для відображення маршруту.",
   "close": "Закрити",
   "showFullRoute": "Показати весь маршрут",
-
   "tryAgainLater": "Спробуй ще раз трохи пізніше.",
   "tryAgain": "Спробувати ще",
   "cancel": "Скасувати",
-
   "ridesLoadError": "Не вдалося завантажити поїздки",
-
   "hourShort": " год",
   "minuteShort": " хв",
   "secondShort": " с",
@@ -127,8 +119,29 @@
   "mileUnit": "миль",
   "kilometersPerHourUnit": "км/год",
   "milesPerHourUnit": "миль/год",
-
   "mapStyleCycling": "Вело",
   "mapStyleTerrain": "Рельєф",
-  "mapStyleSatellite": "Супутник"
+  "mapStyleSatellite": "Супутник",
+  "achievementsTitle": "Досягнення",
+  "achievementSectionRideDistance": "Дистанція за поїздку",
+  "achievementSectionTotalDistance": "Загальна дистанція",
+  "achievementSectionRideCount": "Кількість поїздок",
+  "achievementSectionMaxSpeed": "Максимальна швидкість",
+  "achievementSectionRideDuration": "Час у русі за поїздку",
+  "achievementLabelKm": "{n} км",
+  "achievementLabelKmh": "{n} км/год",
+  "achievementLabelHours": "{n} год",
+  "achievementLabelRides": "{count, plural, one{{count} поїздка} few{{count} поїздки} many{{count} поїздок} other{{count} поїздки}}",
+  "achievementDescRideDistance": "Проїдьте {n} км за одну поїздку",
+  "achievementDescTotalDistance": "Проїдьте {n} км загалом",
+  "achievementDescRideCount": "Завершіть {count, plural, one{{count} поїздку} few{{count} поїздки} many{{count} поїздок} other{{count} поїздки}}",
+  "achievementDescMaxSpeed": "Розженіться до {n} км/год",
+  "achievementDescRideDuration": "Будьте в русі {count, plural, one{{count} годину} few{{count} години} many{{count} годин} other{{count} години}} за одну поїздку",
+  "achievementProgress": "{current} / {target}",
+  "achievementCompleted": "Виконано",
+  "shareAchievementTitle": "Поділитися досягненням",
+  "recordLongestDistance": "Найдовша за відстанню",
+  "recordLongestTime": "Найдовша за часом",
+  "recordHighestAvgSpeed": "Найбільша середня швидкість",
+  "recordHighestMaxSpeed": "Найбільша максимальна швидкість"
 }

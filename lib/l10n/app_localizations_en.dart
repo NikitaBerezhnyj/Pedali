@@ -332,4 +332,108 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mapStyleSatellite => 'Satellite';
+
+  @override
+  String get achievementsTitle => 'Achievements';
+
+  @override
+  String get achievementSectionRideDistance => 'Distance in one ride';
+
+  @override
+  String get achievementSectionTotalDistance => 'Total distance';
+
+  @override
+  String get achievementSectionRideCount => 'Number of rides';
+
+  @override
+  String get achievementSectionMaxSpeed => 'Top speed';
+
+  @override
+  String get achievementSectionRideDuration => 'Moving time in one ride';
+
+  @override
+  String achievementLabelKm(Object n) {
+    return '$n km';
+  }
+
+  @override
+  String achievementLabelKmh(Object n) {
+    return '$n km/h';
+  }
+
+  @override
+  String achievementLabelHours(Object n) {
+    return '$n h';
+  }
+
+  @override
+  String achievementLabelRides(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rides',
+      one: '$count ride',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String achievementDescRideDistance(Object n) {
+    return 'Cover $n km in a single ride';
+  }
+
+  @override
+  String achievementDescTotalDistance(Object n) {
+    return 'Cover $n km in total';
+  }
+
+  @override
+  String achievementDescRideCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rides',
+      one: '$count ride',
+    );
+    return 'Complete $_temp0';
+  }
+
+  @override
+  String achievementDescMaxSpeed(Object n) {
+    return 'Reach $n km/h';
+  }
+
+  @override
+  String achievementDescRideDuration(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours',
+      one: '$count hour',
+    );
+    return 'Keep moving for $_temp0 in a single ride';
+  }
+
+  @override
+  String achievementProgress(Object current, Object target) {
+    return '$current / $target';
+  }
+
+  @override
+  String get achievementCompleted => 'Completed';
+
+  @override
+  String get shareAchievementTitle => 'Share achievement';
+
+  @override
+  String get recordLongestDistance => 'Longest by distance';
+
+  @override
+  String get recordLongestTime => 'Longest by time';
+
+  @override
+  String get recordHighestAvgSpeed => 'Highest average speed';
+
+  @override
+  String get recordHighestMaxSpeed => 'Highest max speed';
 }

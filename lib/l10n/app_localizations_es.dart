@@ -332,4 +332,108 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get mapStyleSatellite => 'Satélite';
+
+  @override
+  String get achievementsTitle => 'Logros';
+
+  @override
+  String get achievementSectionRideDistance => 'Distancia en un recorrido';
+
+  @override
+  String get achievementSectionTotalDistance => 'Distancia total';
+
+  @override
+  String get achievementSectionRideCount => 'Número de recorridos';
+
+  @override
+  String get achievementSectionMaxSpeed => 'Velocidad máxima';
+
+  @override
+  String get achievementSectionRideDuration => 'Tiempo en movimiento por recorrido';
+
+  @override
+  String achievementLabelKm(Object n) {
+    return '$n km';
+  }
+
+  @override
+  String achievementLabelKmh(Object n) {
+    return '$n km/h';
+  }
+
+  @override
+  String achievementLabelHours(Object n) {
+    return '$n h';
+  }
+
+  @override
+  String achievementLabelRides(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recorridos',
+      one: '$count recorrido',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String achievementDescRideDistance(Object n) {
+    return 'Recorre $n km en un solo recorrido';
+  }
+
+  @override
+  String achievementDescTotalDistance(Object n) {
+    return 'Recorre $n km en total';
+  }
+
+  @override
+  String achievementDescRideCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recorridos',
+      one: '$count recorrido',
+    );
+    return 'Completa $_temp0';
+  }
+
+  @override
+  String achievementDescMaxSpeed(Object n) {
+    return 'Alcanza los $n km/h';
+  }
+
+  @override
+  String achievementDescRideDuration(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count horas',
+      one: '$count hora',
+    );
+    return 'Pedalea durante $_temp0 en un solo recorrido';
+  }
+
+  @override
+  String achievementProgress(Object current, Object target) {
+    return '$current / $target';
+  }
+
+  @override
+  String get achievementCompleted => 'Completado';
+
+  @override
+  String get shareAchievementTitle => 'Compartir logro';
+
+  @override
+  String get recordLongestDistance => 'Más larga por distancia';
+
+  @override
+  String get recordLongestTime => 'Más larga por tiempo';
+
+  @override
+  String get recordHighestAvgSpeed => 'Mayor velocidad media';
+
+  @override
+  String get recordHighestMaxSpeed => 'Mayor velocidad máxima';
 }

@@ -674,6 +674,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Satellite'**
   String get mapStyleSatellite;
+
+  /// No description provided for @achievementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get achievementsTitle;
+
+  /// No description provided for @achievementSectionRideDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Distance in one ride'**
+  String get achievementSectionRideDistance;
+
+  /// No description provided for @achievementSectionTotalDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Total distance'**
+  String get achievementSectionTotalDistance;
+
+  /// No description provided for @achievementSectionRideCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of rides'**
+  String get achievementSectionRideCount;
+
+  /// No description provided for @achievementSectionMaxSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Top speed'**
+  String get achievementSectionMaxSpeed;
+
+  /// No description provided for @achievementSectionRideDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Moving time in one ride'**
+  String get achievementSectionRideDuration;
+
+  /// No description provided for @achievementLabelKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} km'**
+  String achievementLabelKm(Object n);
+
+  /// No description provided for @achievementLabelKmh.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} km/h'**
+  String achievementLabelKmh(Object n);
+
+  /// No description provided for @achievementLabelHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} h'**
+  String achievementLabelHours(Object n);
+
+  /// No description provided for @achievementLabelRides.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} ride} other{{count} rides}}'**
+  String achievementLabelRides(num count);
+
+  /// No description provided for @achievementDescRideDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover {n} km in a single ride'**
+  String achievementDescRideDistance(Object n);
+
+  /// No description provided for @achievementDescTotalDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover {n} km in total'**
+  String achievementDescTotalDistance(Object n);
+
+  /// No description provided for @achievementDescRideCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete {count, plural, one{{count} ride} other{{count} rides}}'**
+  String achievementDescRideCount(num count);
+
+  /// No description provided for @achievementDescMaxSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach {n} km/h'**
+  String achievementDescMaxSpeed(Object n);
+
+  /// No description provided for @achievementDescRideDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep moving for {count, plural, one{{count} hour} other{{count} hours}} in a single ride'**
+  String achievementDescRideDuration(num count);
+
+  /// No description provided for @achievementProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} / {target}'**
+  String achievementProgress(Object current, Object target);
+
+  /// No description provided for @achievementCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get achievementCompleted;
+
+  /// No description provided for @shareAchievementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share achievement'**
+  String get shareAchievementTitle;
+
+  /// No description provided for @recordLongestDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest by distance'**
+  String get recordLongestDistance;
+
+  /// No description provided for @recordLongestTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest by time'**
+  String get recordLongestTime;
+
+  /// No description provided for @recordHighestAvgSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest average speed'**
+  String get recordHighestAvgSpeed;
+
+  /// No description provided for @recordHighestMaxSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest max speed'**
+  String get recordHighestMaxSpeed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

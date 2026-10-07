@@ -1,7 +1,7 @@
 import 'package:latlong2/latlong.dart';
 
-class ShareCardData {
-  const ShareCardData({
+class RideShareCardData {
+  const RideShareCardData({
     required this.segments,
     required this.distance,
     required this.movingTime,

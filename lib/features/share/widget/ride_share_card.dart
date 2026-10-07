@@ -9,7 +9,7 @@ class RideShareCard extends StatelessWidget {
 
   static const double size = 360;
 
-  final ShareCardData data;
+  final RideShareCardData data;
 
   @override
   Widget build(BuildContext context) {
