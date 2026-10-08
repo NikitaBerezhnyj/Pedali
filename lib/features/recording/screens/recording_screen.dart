@@ -70,7 +70,11 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
 
     if (!mounted) return;
 
+    final rideId = ref.read(recorderControllerProvider).rideId;
+    int? savedRideId;
+
     if (controller.isSavable) {
+      savedRideId = rideId;
       controller.acknowledgeSaved();
     } else {
       final keep = await showConfirmDialog(
@@ -83,6 +87,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
       );
 
       if (keep) {
+        savedRideId = rideId;
         controller.acknowledgeSaved();
       } else {
         await controller.discardLastRide();
@@ -90,7 +95,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
     }
 
     if (mounted) {
-      Navigator.pop(context);
+      Navigator.pop(context, savedRideId);
     }
   }
 

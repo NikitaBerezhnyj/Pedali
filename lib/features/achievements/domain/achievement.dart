@@ -1,4 +1,4 @@
-import 'package:pedali/features/achievements/widgets/achievement_stats.dart';
+import 'package:pedali/features/achievements/domain/achievement_stats.dart';
 
 enum AchievementMetric {
   rideDistance,

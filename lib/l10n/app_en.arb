@@ -148,5 +148,7 @@
   "rideInProgress": "Ride in progress",
   "ridePaused": "Ride paused",
   "recordingNotificationText": "Recording your ride",
-  "locationAccessError": "Location access unavailable. Check the permission and make sure location is turned on."
+  "locationAccessError": "Location access unavailable. Check the permission and make sure location is turned on.",
+  "achievementUnlocked": "New achievement",
+  "viewAllAchievements": "All achievements"
 }

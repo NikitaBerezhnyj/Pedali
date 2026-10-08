@@ -148,5 +148,7 @@
   "rideInProgress": "Поїздка триває",
   "ridePaused": "Поїздка на паузі",
   "recordingNotificationText": "Записую поїздку",
-  "locationAccessError": "Немає доступу до геолокації. Перевір дозвіл і чи ввімкнено GPS."
+  "locationAccessError": "Немає доступу до геолокації. Перевір дозвіл і чи ввімкнено GPS.",
+  "achievementUnlocked": "Нове досягнення",
+  "viewAllAchievements": "Усі досягнення"
 }

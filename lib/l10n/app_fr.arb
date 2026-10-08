@@ -148,5 +148,7 @@
   "rideInProgress": "Sortie en cours",
   "ridePaused": "Sortie en pause",
   "recordingNotificationText": "Enregistrement de la sortie",
-  "locationAccessError": "Accès à la position impossible. Vérifiez la permission et que la localisation est activée."
+  "locationAccessError": "Accès à la position impossible. Vérifiez la permission et que la localisation est activée.",
+  "achievementUnlocked": "Nouveau succès",
+  "viewAllAchievements": "Tous les succès"
 }

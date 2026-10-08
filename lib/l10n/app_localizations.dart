@@ -836,6 +836,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Location access unavailable. Check the permission and make sure location is turned on.'**
   String get locationAccessError;
+
+  /// No description provided for @achievementUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'New achievement'**
+  String get achievementUnlocked;
+
+  /// No description provided for @viewAllAchievements.
+  ///
+  /// In en, this message translates to:
+  /// **'All achievements'**
+  String get viewAllAchievements;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -78,6 +78,12 @@ class RideRepository {
     );
   }
 
+  Future<List<Ride>> getFinishedRides() {
+    return (_db.select(
+      _db.rides,
+    )..where((r) => r.status.equalsValue(RideStatus.finished))).get();
+  }
+
   Future<void> setElapsedTime(int rideId, Duration elapsed) {
     return (_db.update(_db.rides)..where((r) => r.id.equals(rideId))).write(
       RidesCompanion(elapsedTimeMs: Value(elapsed.inMilliseconds)),

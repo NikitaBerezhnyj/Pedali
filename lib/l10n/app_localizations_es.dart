@@ -451,4 +451,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get locationAccessError => 'Sin acceso a la ubicación. Revisa el permiso y que la ubicación esté activada.';
+
+  @override
+  String get achievementUnlocked => 'Nuevo logro';
+
+  @override
+  String get viewAllAchievements => 'Todos los logros';
 }

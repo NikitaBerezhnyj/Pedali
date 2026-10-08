@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pedali/features/achievements/domain/achievement.dart';
+import 'package:pedali/features/achievements/widgets/achievement_share.dart';
 import 'package:pedali/features/achievements/widgets/achievement_ui.dart';
-import 'package:pedali/features/share/widget/achievement_share_card.dart';
-import 'package:pedali/features/share/widget/share_card_screen.dart';
 import 'package:pedali/l10n/app_localizations.dart';
 import 'package:pedali/theme/app_tokens.dart';
 
@@ -16,17 +15,7 @@ class AchievementDialog extends StatelessWidget {
     final navigator = Navigator.of(context);
 
     navigator.pop();
-    navigator.push(
-      ShareCardScreen.route(
-        title: t.shareAchievementTitle,
-        card: AchievementShareCard(
-          icon: achievement.metric.icon,
-          label: achievement.label(t),
-          description: achievement.description(t),
-          completedLabel: t.achievementCompleted,
-        ),
-      ),
-    );
+    openAchievementShare(navigator, t, achievement);
   }
 
   @override
@@ -39,7 +28,7 @@ class AchievementDialog extends StatelessWidget {
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 48),
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

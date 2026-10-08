@@ -6,10 +6,13 @@ import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/core/widgets/app_list_card.dart';
 import 'package:pedali/core/widgets/async_value_view.dart';
 import 'package:pedali/core/widgets/empty_state.dart';
+import 'package:pedali/features/achievements/domain/newly_unlocked_achievements.dart';
+import 'package:pedali/features/achievements/screens/achievement_unlock_screen.dart';
 import 'package:pedali/features/achievements/screens/achievements_screen.dart';
 import 'package:pedali/features/recording/providers/recorder_controller_provider.dart';
 import 'package:pedali/features/recording/screens/recording_screen.dart';
 import 'package:pedali/features/rides/providers/finished_rides_provider.dart';
+import 'package:pedali/features/rides/providers/ride_repository_provider.dart';
 import 'package:pedali/features/rides/screens/ride_detail_screen.dart';
 import 'package:pedali/features/rides/widgets/active_ride_banner.dart';
 import 'package:pedali/features/settings/providers/units_provider.dart';
@@ -92,15 +95,10 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
 
       if (!mounted) return;
 
-      await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const RecordingScreen()),
-      );
+      await _showRecording();
     } else {
       await controller.discardStaleRide(stale);
     }
-
-    ref.invalidate(finishedRidesProvider);
   }
 
   String _formatAgo(Duration duration, AppLocalizations t) {
@@ -150,15 +148,29 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
         ).showSnackBar(SnackBar(content: Text(t.locationAccessError)));
         return;
       }
+
       if (!ref.read(recorderControllerProvider).isActive) return;
     }
 
-    await Navigator.push(
+    await _showRecording();
+  }
+
+  Future<void> _showRecording() async {
+    final rideId = await Navigator.push<int>(
       context,
-      MaterialPageRoute(builder: (_) => const RecordingScreen()),
+      MaterialPageRoute<int>(builder: (_) => const RecordingScreen()),
     );
 
     ref.invalidate(finishedRidesProvider);
+
+    if (rideId == null || !mounted) return;
+
+    final rides = await ref.read(rideRepositoryProvider).getFinishedRides();
+    final unlocked = newlyUnlockedAchievements(rides, rideId);
+
+    if (unlocked.isEmpty || !mounted) return;
+
+    await Navigator.push(context, AchievementUnlockScreen.route(unlocked));
   }
 
   @override

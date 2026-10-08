@@ -464,4 +464,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get locationAccessError => 'Немає доступу до геолокації. Перевір дозвіл і чи ввімкнено GPS.';
+
+  @override
+  String get achievementUnlocked => 'Нове досягнення';
+
+  @override
+  String get viewAllAchievements => 'Усі досягнення';
 }

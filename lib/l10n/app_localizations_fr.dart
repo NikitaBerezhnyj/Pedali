@@ -451,4 +451,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get locationAccessError => 'Accès à la position impossible. Vérifiez la permission et que la localisation est activée.';
+
+  @override
+  String get achievementUnlocked => 'Nouveau succès';
+
+  @override
+  String get viewAllAchievements => 'Tous les succès';
 }

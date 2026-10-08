@@ -451,4 +451,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get locationAccessError => 'Location access unavailable. Check the permission and make sure location is turned on.';
+
+  @override
+  String get achievementUnlocked => 'New achievement';
+
+  @override
+  String get viewAllAchievements => 'All achievements';
 }
