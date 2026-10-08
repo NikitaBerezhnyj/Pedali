@@ -449,4 +449,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get recordHighestMaxSpeed => 'Найбільша максимальна швидкість';
+
+  @override
+  String get continueRide => 'Продовжити поїздку';
 }

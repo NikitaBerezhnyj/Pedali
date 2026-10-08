@@ -33,6 +33,8 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
   }
 
   Future<void> _checkStaleRide() async {
+    if (ref.read(recorderControllerProvider).isActive) return;
+
     final controller = ref.read(recorderControllerProvider.notifier);
 
     final stale = await controller.checkForActiveRide();
@@ -128,10 +130,13 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     MaterialPageRoute(builder: (_) => const AchievementsScreen()),
   );
 
-  Future<void> _startRide() async {
-    await ref.read(recorderControllerProvider.notifier).start();
+  Future<void> _openRecording() async {
+    final controller = ref.read(recorderControllerProvider.notifier);
 
-    if (!mounted) return;
+    if (!ref.read(recorderControllerProvider).isActive) {
+      await controller.start();
+      if (!mounted || !ref.read(recorderControllerProvider).isActive) return;
+    }
 
     await Navigator.push(
       context,
@@ -147,6 +152,9 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     final cs = theme.colorScheme;
     final t = AppLocalizations.of(context)!;
     final units = ref.watch(unitsProvider);
+    final recording = ref.watch(
+      recorderControllerProvider.select((s) => s.isActive),
+    );
 
     return Scaffold(
       appBar: AppHeader(
@@ -228,9 +236,9 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
           child: SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
-              onPressed: _startRide,
+              onPressed: _openRecording,
               icon: const Icon(Icons.directions_bike),
-              label: Text(t.startRide),
+              label: Text(recording ? t.continueRide : t.startRide),
             ),
           ),
         ),

@@ -806,6 +806,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Highest max speed'**
   String get recordHighestMaxSpeed;
+
+  /// No description provided for @continueRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue ride'**
+  String get continueRide;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

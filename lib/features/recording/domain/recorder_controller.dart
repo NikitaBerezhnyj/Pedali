@@ -36,6 +36,8 @@ class RecorderController extends Notifier<RecorderState> {
   DateTime? _badSince;
   DateTime? _goodSince;
 
+  bool _starting = false;
+
   RideRepository get _repo => ref.read(rideRepositoryProvider);
   LocationSource get _location => ref.read(locationSourceProvider);
 
@@ -126,24 +128,32 @@ class RecorderController extends Notifier<RecorderState> {
   Future<void> discardStaleRide(Ride ride) => _repo.deleteRide(ride.id);
 
   Future<void> start() async {
-    if (state.status != RecorderStatus.idle) return;
+    if (state.status != RecorderStatus.idle || _starting) return;
 
-    final granted = await _location.ensurePermissions();
-    if (!granted) {
-      state = state.copyWith(message: 'Немає дозволу на геолокацію');
-      return;
+    _starting = true;
+
+    try {
+      final granted = await _location.ensurePermissions();
+      if (!granted) {
+        state = state.copyWith(message: 'Немає дозволу на геолокацію');
+        return;
+      }
+
+      _accumulator.reset();
+      final now = DateTime.now().toUtc();
+      final rideId = await _repo.startRide(now);
+
+      _elapsedBeforeCurrentSegment = Duration.zero;
+      _badSince = null;
+      _goodSince = null;
+
+      state = RecorderState(status: RecorderStatus.recording, rideId: rideId);
+
+      await _openSegmentAndListen(rideId);
+      _tickTimer = Timer.periodic(_tickInterval, (_) => _tick());
+    } finally {
+      _starting = false;
     }
-
-    _accumulator.reset();
-    final now = DateTime.now().toUtc();
-    final rideId = await _repo.startRide(now);
-    _elapsedBeforeCurrentSegment = Duration.zero;
-    _badSince = null;
-    _goodSince = null;
-
-    state = RecorderState(status: RecorderStatus.recording, rideId: rideId);
-    await _openSegmentAndListen(rideId);
-    _tickTimer = Timer.periodic(_tickInterval, (_) => _tick());
   }
 
   Future<void> pause() async {

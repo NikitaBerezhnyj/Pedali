@@ -436,4 +436,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recordHighestMaxSpeed => 'Vitesse maximale la plus élevée';
+
+  @override
+  String get continueRide => 'Reprendre la sortie';
 }

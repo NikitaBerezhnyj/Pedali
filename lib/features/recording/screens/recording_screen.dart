@@ -43,11 +43,6 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
     super.dispose();
   }
 
-  bool _isActive(RecorderStatus status) =>
-      status == RecorderStatus.recording ||
-      status == RecorderStatus.paused ||
-      status == RecorderStatus.autoPaused;
-
   void _recenter(LatLng? position) {
     if (position == null) return;
 
@@ -117,12 +112,7 @@ class _RecordingScreenState extends ConsumerState<RecordingScreen> {
     const gapAboveSheet = AppSpacing.md;
 
     return PopScope(
-      canPop: !_isActive(s.status),
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
-          _confirmStop();
-        }
-      },
+      canPop: s.status != RecorderStatus.saving,
       child: Scaffold(
         body: Stack(
           fit: StackFit.expand,

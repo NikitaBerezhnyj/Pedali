@@ -143,5 +143,6 @@
   "recordLongestDistance": "Найдовша за відстанню",
   "recordLongestTime": "Найдовша за часом",
   "recordHighestAvgSpeed": "Найбільша середня швидкість",
-  "recordHighestMaxSpeed": "Найбільша максимальна швидкість"
+  "recordHighestMaxSpeed": "Найбільша максимальна швидкість",
+  "continueRide": "Продовжити поїздку"
 }

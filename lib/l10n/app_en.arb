@@ -143,5 +143,6 @@
   "recordLongestDistance": "Longest by distance",
   "recordLongestTime": "Longest by time",
   "recordHighestAvgSpeed": "Highest average speed",
-  "recordHighestMaxSpeed": "Highest max speed"
+  "recordHighestMaxSpeed": "Highest max speed",
+  "continueRide": "Continue ride"
 }
