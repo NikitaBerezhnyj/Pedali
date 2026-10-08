@@ -445,4 +445,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ridePaused => 'Sortie en pause';
+
+  @override
+  String get recordingNotificationText => 'Enregistrement de la sortie';
+
+  @override
+  String get locationAccessError => 'Accès à la position impossible. Vérifiez la permission et que la localisation est activée.';
 }

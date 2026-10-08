@@ -824,6 +824,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ride paused'**
   String get ridePaused;
+
+  /// No description provided for @recordingNotificationText.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording your ride'**
+  String get recordingNotificationText;
+
+  /// No description provided for @locationAccessError.
+  ///
+  /// In en, this message translates to:
+  /// **'Location access unavailable. Check the permission and make sure location is turned on.'**
+  String get locationAccessError;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

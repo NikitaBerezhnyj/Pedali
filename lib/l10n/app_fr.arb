@@ -146,5 +146,7 @@
   "recordHighestMaxSpeed": "Vitesse maximale la plus élevée",
   "continueRide": "Reprendre la sortie",
   "rideInProgress": "Sortie en cours",
-  "ridePaused": "Sortie en pause"
+  "ridePaused": "Sortie en pause",
+  "recordingNotificationText": "Enregistrement de la sortie",
+  "locationAccessError": "Accès à la position impossible. Vérifiez la permission et que la localisation est activée."
 }

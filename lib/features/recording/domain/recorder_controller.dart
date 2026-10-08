@@ -37,6 +37,7 @@ class RecorderController extends Notifier<RecorderState> {
   DateTime? _goodSince;
 
   bool _starting = false;
+  String _notificationText = 'Pedali';
 
   RideRepository get _repo => ref.read(rideRepositoryProvider);
   LocationSource get _location => ref.read(locationSourceProvider);
@@ -71,9 +72,14 @@ class RecorderController extends Notifier<RecorderState> {
     );
   }
 
-  Future<void> resumeStaleRide(Ride ride) async {
+  Future<void> resumeStaleRide(
+    Ride ride, {
+    required String notificationText,
+  }) async {
     final segments = await _repo.getSegments(ride.id);
     final points = await _repo.getTrackPoints(ride.id);
+
+    _notificationText = notificationText;
 
     _accumulator.reset();
     final track = <LatLng>[];
@@ -127,17 +133,18 @@ class RecorderController extends Notifier<RecorderState> {
 
   Future<void> discardStaleRide(Ride ride) => _repo.deleteRide(ride.id);
 
-  Future<void> start() async {
-    if (state.status != RecorderStatus.idle || _starting) return;
+  Future<bool> start({required String notificationText}) async {
+    if (state.status != RecorderStatus.idle || _starting) return true;
 
     _starting = true;
 
     try {
       final granted = await _location.ensurePermissions();
       if (!granted) {
-        state = state.copyWith(message: 'Немає дозволу на геолокацію');
-        return;
+        return false;
       }
+
+      _notificationText = notificationText;
 
       _accumulator.reset();
       final now = DateTime.now().toUtc();
@@ -151,6 +158,8 @@ class RecorderController extends Notifier<RecorderState> {
 
       await _openSegmentAndListen(rideId);
       _tickTimer = Timer.periodic(_tickInterval, (_) => _tick());
+
+      return true;
     } finally {
       _starting = false;
     }
@@ -201,12 +210,14 @@ class RecorderController extends Notifier<RecorderState> {
     await _openNewSegmentOnly(rideId);
     _pendingPoints.clear();
 
-    _positionSub = _location.positions().listen(
-      _onPoint,
-      onError: (e) {
-        state = state.copyWith(message: '$e');
-      },
-    );
+    _positionSub = _location
+        .positions(notificationText: _notificationText)
+        .listen(
+          _onPoint,
+          onError: (e) {
+            state = state.copyWith(message: '$e');
+          },
+        );
     _flushTimer = Timer.periodic(_flushInterval, (_) => _flush());
   }
 

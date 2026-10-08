@@ -458,4 +458,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get ridePaused => 'Поїздка на паузі';
+
+  @override
+  String get recordingNotificationText => 'Записую поїздку';
+
+  @override
+  String get locationAccessError => 'Немає доступу до геолокації. Перевір дозвіл і чи ввімкнено GPS.';
 }

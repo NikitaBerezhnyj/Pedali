@@ -146,5 +146,7 @@
   "recordHighestMaxSpeed": "Highest max speed",
   "continueRide": "Continue ride",
   "rideInProgress": "Ride in progress",
-  "ridePaused": "Ride paused"
+  "ridePaused": "Ride paused",
+  "recordingNotificationText": "Recording your ride",
+  "locationAccessError": "Location access unavailable. Check the permission and make sure location is turned on."
 }

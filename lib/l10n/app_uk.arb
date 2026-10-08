@@ -146,5 +146,7 @@
   "recordHighestMaxSpeed": "Найбільша максимальна швидкість",
   "continueRide": "Продовжити поїздку",
   "rideInProgress": "Поїздка триває",
-  "ridePaused": "Поїздка на паузі"
+  "ridePaused": "Поїздка на паузі",
+  "recordingNotificationText": "Записую поїздку",
+  "locationAccessError": "Немає доступу до геолокації. Перевір дозвіл і чи ввімкнено GPS."
 }

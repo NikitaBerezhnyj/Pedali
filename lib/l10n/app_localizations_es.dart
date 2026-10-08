@@ -445,4 +445,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get ridePaused => 'Recorrido en pausa';
+
+  @override
+  String get recordingNotificationText => 'Grabando tu recorrido';
+
+  @override
+  String get locationAccessError => 'Sin acceso a la ubicación. Revisa el permiso y que la ubicación esté activada.';
 }

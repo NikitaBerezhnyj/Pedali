@@ -85,7 +85,10 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
     if (!mounted) return;
 
     if (resume == true) {
-      await controller.resumeStaleRide(stale);
+      await controller.resumeStaleRide(
+        stale,
+        notificationText: t.recordingNotificationText,
+      );
 
       if (!mounted) return;
 
@@ -132,11 +135,22 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
   );
 
   Future<void> _openRecording() async {
+    final t = AppLocalizations.of(context)!;
     final controller = ref.read(recorderControllerProvider.notifier);
 
     if (!ref.read(recorderControllerProvider).isActive) {
-      await controller.start();
-      if (!mounted || !ref.read(recorderControllerProvider).isActive) return;
+      final granted = await controller.start(
+        notificationText: t.recordingNotificationText,
+      );
+      if (!mounted) return;
+
+      if (!granted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(t.locationAccessError)));
+        return;
+      }
+      if (!ref.read(recorderControllerProvider).isActive) return;
     }
 
     await Navigator.push(

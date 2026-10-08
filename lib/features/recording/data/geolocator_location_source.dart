@@ -22,17 +22,17 @@ class GeolocatorLocationSource implements LocationSource {
   }
 
   @override
-  Stream<GPSTrackPoint> positions() {
+  Stream<GPSTrackPoint> positions({required String notificationText}) {
     final settings = AndroidSettings(
       accuracy: LocationAccuracy.best,
       distanceFilter: 3,
       intervalDuration: const Duration(seconds: 1),
-      foregroundNotificationConfig: const ForegroundNotificationConfig(
+      foregroundNotificationConfig: ForegroundNotificationConfig(
         notificationTitle: 'Pedali',
-        notificationText: 'Записую поїздку',
+        notificationText: notificationText,
         enableWakeLock: true,
         setOngoing: true,
-        notificationIcon: AndroidResource(name: 'ic_notification'),
+        notificationIcon: const AndroidResource(name: 'ic_notification'),
       ),
     );
     return Geolocator.getPositionStream(
