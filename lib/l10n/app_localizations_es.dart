@@ -439,4 +439,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get continueRide => 'Continuar recorrido';
+
+  @override
+  String get rideInProgress => 'Recorrido en curso';
+
+  @override
+  String get ridePaused => 'Recorrido en pausa';
 }

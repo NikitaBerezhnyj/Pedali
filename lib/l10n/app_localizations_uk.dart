@@ -452,4 +452,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get continueRide => 'Продовжити поїздку';
+
+  @override
+  String get rideInProgress => 'Поїздка триває';
+
+  @override
+  String get ridePaused => 'Поїздка на паузі';
 }

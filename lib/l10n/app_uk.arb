@@ -144,5 +144,7 @@
   "recordLongestTime": "Найдовша за часом",
   "recordHighestAvgSpeed": "Найбільша середня швидкість",
   "recordHighestMaxSpeed": "Найбільша максимальна швидкість",
-  "continueRide": "Продовжити поїздку"
+  "continueRide": "Продовжити поїздку",
+  "rideInProgress": "Поїздка триває",
+  "ridePaused": "Поїздка на паузі"
 }

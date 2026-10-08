@@ -11,6 +11,7 @@ import 'package:pedali/features/recording/providers/recorder_controller_provider
 import 'package:pedali/features/recording/screens/recording_screen.dart';
 import 'package:pedali/features/rides/providers/finished_rides_provider.dart';
 import 'package:pedali/features/rides/screens/ride_detail_screen.dart';
+import 'package:pedali/features/rides/widgets/active_ride_banner.dart';
 import 'package:pedali/features/settings/providers/units_provider.dart';
 import 'package:pedali/features/settings/screens/settings_screen.dart';
 import 'package:pedali/features/stats/screens/stats_screen.dart';
@@ -176,54 +177,61 @@ class _RideListScreenState extends ConsumerState<RideListScreen> {
           ),
         ],
       ),
-      body: AsyncValueView(
-        value: ref.watch(finishedRidesProvider),
-        errorTitle: t.ridesLoadError,
-        retryDescription: t.tryAgainLater,
-        retryLabel: t.tryAgain,
-        onRetry: () => ref.invalidate(finishedRidesProvider),
-        data: (rides) {
-          if (rides.isEmpty) {
-            return Center(
-              child: EmptyState(
-                icon: Icons.directions_bike,
-                title: t.rideListEmptyTitle,
-                description: t.rideListEmptyDescription,
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            itemCount: rides.length,
-            itemBuilder: (context, i) {
-              final ride = rides[i];
-
-              return AppListCard(
-                title: units.formatDistance(ride.distanceMeters, t),
-                subtitle:
-                    '${formatStartedAt(ride.startedAt, locale: t.localeName)} • '
-                    '${formatDuration(Duration(milliseconds: ride.movingTimeMs), t)}',
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      units.formatSpeed(ride.avgSpeedMps, t),
-                      style: theme.textTheme.titleSmall,
+      body: Column(
+        children: [
+          ActiveRideBanner(onTap: _openRecording),
+          Expanded(
+            child: AsyncValueView(
+              value: ref.watch(finishedRidesProvider),
+              errorTitle: t.ridesLoadError,
+              retryDescription: t.tryAgainLater,
+              retryLabel: t.tryAgain,
+              onRetry: () => ref.invalidate(finishedRidesProvider),
+              data: (rides) {
+                if (rides.isEmpty) {
+                  return Center(
+                    child: EmptyState(
+                      icon: Icons.directions_bike,
+                      title: t.rideListEmptyTitle,
+                      description: t.rideListEmptyDescription,
                     ),
-                    Icon(Icons.chevron_right, color: cs.onSurfaceVariant),
-                  ],
-                ),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => RideDetailScreen(rideId: ride.id),
-                  ),
-                ),
-              );
-            },
-          );
-        },
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  itemCount: rides.length,
+                  itemBuilder: (context, i) {
+                    final ride = rides[i];
+
+                    return AppListCard(
+                      title: units.formatDistance(ride.distanceMeters, t),
+                      subtitle:
+                          '${formatStartedAt(ride.startedAt, locale: t.localeName)} • '
+                          '${formatDuration(Duration(milliseconds: ride.movingTimeMs), t)}',
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            units.formatSpeed(ride.avgSpeedMps, t),
+                            style: theme.textTheme.titleSmall,
+                          ),
+                          Icon(Icons.chevron_right, color: cs.onSurfaceVariant),
+                        ],
+                      ),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => RideDetailScreen(rideId: ride.id),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(

@@ -144,5 +144,7 @@
   "recordLongestTime": "Más larga por tiempo",
   "recordHighestAvgSpeed": "Mayor velocidad media",
   "recordHighestMaxSpeed": "Mayor velocidad máxima",
-  "continueRide": "Continuar recorrido"
+  "continueRide": "Continuar recorrido",
+  "rideInProgress": "Recorrido en curso",
+  "ridePaused": "Recorrido en pausa"
 }

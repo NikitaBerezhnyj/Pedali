@@ -812,6 +812,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue ride'**
   String get continueRide;
+
+  /// No description provided for @rideInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride in progress'**
+  String get rideInProgress;
+
+  /// No description provided for @ridePaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride paused'**
+  String get ridePaused;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
