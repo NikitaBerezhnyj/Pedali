@@ -8,8 +8,14 @@ class RouteSimplifier {
   static const int minPointsToSimplify = 500;
 
   List<LatLng> simplify(List<LatLng> points, {double toleranceMeters = 5}) {
+    final indexes = simplifyIndexes(points, toleranceMeters: toleranceMeters);
+
+    return indexes.map((index) => points[index]).toList();
+  }
+
+  List<int> simplifyIndexes(List<LatLng> points, {double toleranceMeters = 5}) {
     if (points.length <= 2 || points.length < minPointsToSimplify) {
-      return points;
+      return List.generate(points.length, (i) => i);
     }
 
     final referenceLatitude = points.first.latitude * math.pi / 180;
@@ -39,7 +45,7 @@ class RouteSimplifier {
       ..add(points.length - 1)
       ..sort();
 
-    return simplifiedIndexes.map((index) => points[index]).toList();
+    return simplifiedIndexes;
   }
 
   void _simplify(
