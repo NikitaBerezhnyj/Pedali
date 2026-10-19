@@ -848,6 +848,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All achievements'**
   String get viewAllAchievements;
+
+  /// No description provided for @routeColorTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Route color'**
+  String get routeColorTooltip;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

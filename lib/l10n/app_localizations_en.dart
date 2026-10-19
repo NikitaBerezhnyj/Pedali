@@ -457,4 +457,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewAllAchievements => 'All achievements';
+
+  @override
+  String get routeColorTooltip => 'Route color';
 }

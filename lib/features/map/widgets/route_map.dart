@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pedali/core/widgets/empty_state.dart';
+import 'package:pedali/features/map/domain/route_color_mode.dart';
+import 'package:pedali/features/map/domain/route_point.dart';
+import 'package:pedali/features/map/providers/route_color_mode_provider.dart';
+import 'package:pedali/features/map/utils/speed_color_scale.dart';
 import 'package:pedali/features/map/widgets/app_tile_layer.dart';
+import 'package:pedali/features/map/widgets/route_color_mode_button.dart';
 import 'package:pedali/features/map/widgets/route_endpoints_layer.dart';
+import 'package:pedali/features/map/widgets/speed_legend.dart';
 import 'package:pedali/l10n/app_localizations.dart';
 import 'package:pedali/theme/app_tokens.dart';
 
@@ -19,9 +26,68 @@ class RoutePolylineLayer extends StatelessWidget {
     return PolylineLayer(
       polylines: segments
           .where((s) => s.length > 1)
-          .map((s) => Polyline(points: s, strokeWidth: 4, color: color))
+          .map(
+            (s) => Polyline(
+              points: s,
+              strokeWidth: 5,
+              color: color,
+              borderStrokeWidth: 1.5,
+              borderColor: Colors.white,
+            ),
+          )
           .toList(),
     );
+  }
+}
+
+class SpeedPolylineLayer extends StatelessWidget {
+  const SpeedPolylineLayer({
+    super.key,
+    required this.segments,
+    required this.scale,
+  });
+
+  final List<List<RoutePoint>> segments;
+  final SpeedColorScale scale;
+
+  @override
+  Widget build(BuildContext context) {
+    return PolylineLayer(
+      polylines: segments
+          .where((s) => s.length > 1)
+          .map(
+            (s) => Polyline(
+              points: s.map((p) => p.position).toList(),
+              strokeWidth: 5,
+              borderStrokeWidth: 1.5,
+              borderColor: Colors.white,
+              gradientColors: s.map((p) => scale.colorAt(p.speedMps)).toList(),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class RouteColorLayer extends ConsumerWidget {
+  const RouteColorLayer({
+    super.key,
+    required this.segments,
+    required this.scale,
+  });
+
+  final List<List<RoutePoint>> segments;
+  final SpeedColorScale scale;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return switch (ref.watch(routeColorModeProvider)) {
+      RouteColorMode.speed => SpeedPolylineLayer(
+        segments: segments,
+        scale: scale,
+      ),
+      RouteColorMode.brand => RoutePolylineLayer(segments: segments.positions),
+    };
   }
 }
 
@@ -36,7 +102,7 @@ class RouteMap extends StatelessWidget {
 
   static const double defaultHeight = 300;
 
-  final List<List<LatLng>> segments;
+  final List<List<RoutePoint>> segments;
   final double height;
   final VoidCallback? onExpand;
   final EdgeInsets fitPadding;
@@ -44,7 +110,8 @@ class RouteMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final points = segments.expand((s) => s).toList();
+    final positions = segments.positions;
+    final points = positions.expand((s) => s).toList();
     final theme = Theme.of(context);
 
     if (points.length < 2) {
@@ -72,6 +139,7 @@ class RouteMap extends StatelessWidget {
 
   Widget _buildMap(BuildContext context, List<LatLng> points) {
     final cs = Theme.of(context).colorScheme;
+    final scale = SpeedColorScale.fromSegments(segments);
 
     return SizedBox(
       height: height,
@@ -92,11 +160,18 @@ class RouteMap extends StatelessWidget {
               ),
               children: [
                 const AppTileLayer(),
-                RoutePolylineLayer(segments: segments),
-                RouteEndpointsLayer(segments: segments),
+                RouteColorLayer(segments: segments, scale: scale),
+                RouteEndpointsLayer(segments: segments.positions),
                 const AppMapAttribution(),
               ],
             ),
+
+            Positioned(
+              left: 12,
+              bottom: 12,
+              child: IgnorePointer(child: SpeedLegend(scale: scale)),
+            ),
+
             if (onExpand != null)
               Positioned.fill(
                 child: GestureDetector(
@@ -104,6 +179,13 @@ class RouteMap extends StatelessWidget {
                   onTap: onExpand,
                 ),
               ),
+
+            const Positioned(
+              right: 12,
+              bottom: 12,
+              child: RouteColorModeButton(),
+            ),
+
             if (onExpand != null)
               Positioned(
                 top: 12,

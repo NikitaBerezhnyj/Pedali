@@ -150,5 +150,6 @@
   "recordingNotificationText": "Enregistrement de la sortie",
   "locationAccessError": "Accès à la position impossible. Vérifiez la permission et que la localisation est activée.",
   "achievementUnlocked": "Nouveau succès",
-  "viewAllAchievements": "Tous les succès"
+  "viewAllAchievements": "Tous les succès",
+  "routeColorTooltip": "Couleur du tracé"
 }

@@ -150,5 +150,6 @@
   "recordingNotificationText": "Recording your ride",
   "locationAccessError": "Location access unavailable. Check the permission and make sure location is turned on.",
   "achievementUnlocked": "New achievement",
-  "viewAllAchievements": "All achievements"
+  "viewAllAchievements": "All achievements",
+  "routeColorTooltip": "Route color"
 }

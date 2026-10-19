@@ -470,4 +470,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get viewAllAchievements => 'Усі досягнення';
+
+  @override
+  String get routeColorTooltip => 'Колір маршруту';
 }

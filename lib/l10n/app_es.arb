@@ -150,5 +150,6 @@
   "recordingNotificationText": "Grabando tu recorrido",
   "locationAccessError": "Sin acceso a la ubicación. Revisa el permiso y que la ubicación esté activada.",
   "achievementUnlocked": "Nuevo logro",
-  "viewAllAchievements": "Todos los logros"
+  "viewAllAchievements": "Todos los logros",
+  "routeColorTooltip": "Color de la ruta"
 }

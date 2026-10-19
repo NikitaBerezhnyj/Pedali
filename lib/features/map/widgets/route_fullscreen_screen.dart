@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:pedali/core/widgets/app_circle_button.dart';
+import 'package:pedali/features/map/domain/route_point.dart';
+import 'package:pedali/features/map/utils/speed_color_scale.dart';
 import 'package:pedali/features/map/widgets/app_tile_layer.dart';
+import 'package:pedali/features/map/widgets/route_color_mode_button.dart';
 import 'package:pedali/features/map/widgets/route_endpoints_layer.dart';
 import 'package:pedali/features/map/widgets/route_map.dart';
+import 'package:pedali/features/map/widgets/speed_legend.dart';
 import 'package:pedali/l10n/app_localizations.dart';
 
 class RouteFullscreenScreen extends StatefulWidget {
   const RouteFullscreenScreen({super.key, required this.segments});
-  final List<List<LatLng>> segments;
 
-  static Route<void> route(List<List<LatLng>> segments) => MaterialPageRoute(
-    fullscreenDialog: true,
-    builder: (_) => RouteFullscreenScreen(segments: segments),
-  );
+  final List<List<RoutePoint>> segments;
+
+  static Route<void> route(List<List<RoutePoint>> segments) =>
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => RouteFullscreenScreen(segments: segments),
+      );
 
   @override
   State<RouteFullscreenScreen> createState() => _RouteFullscreenScreenState();
@@ -22,8 +27,13 @@ class RouteFullscreenScreen extends StatefulWidget {
 
 class _RouteFullscreenScreenState extends State<RouteFullscreenScreen> {
   final _controller = MapController();
+
+  late final _scale = SpeedColorScale.fromSegments(widget.segments);
+
   late final CameraFit _fit = CameraFit.bounds(
-    bounds: LatLngBounds.fromPoints(widget.segments.expand((s) => s).toList()),
+    bounds: LatLngBounds.fromPoints(
+      widget.segments.positions.expand((s) => s).toList(),
+    ),
     padding: const EdgeInsets.fromLTRB(32, 96, 32, 64),
     maxZoom: 17,
   );
@@ -51,8 +61,8 @@ class _RouteFullscreenScreenState extends State<RouteFullscreenScreen> {
             ),
             children: [
               const AppTileLayer(),
-              RoutePolylineLayer(segments: widget.segments),
-              RouteEndpointsLayer(segments: widget.segments),
+              RouteColorLayer(segments: widget.segments, scale: _scale),
+              RouteEndpointsLayer(segments: widget.segments.positions),
               const AppMapAttribution(),
             ],
           ),
@@ -60,6 +70,7 @@ class _RouteFullscreenScreenState extends State<RouteFullscreenScreen> {
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppCircleButton(
                     icon: Icons.close,
@@ -67,13 +78,27 @@ class _RouteFullscreenScreenState extends State<RouteFullscreenScreen> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   const Spacer(),
-                  AppCircleButton(
-                    icon: Icons.center_focus_strong_outlined,
-                    tooltip: t.showFullRoute,
-                    onPressed: () => _controller.fitCamera(_fit),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppCircleButton(
+                        icon: Icons.center_focus_strong_outlined,
+                        tooltip: t.showFullRoute,
+                        onPressed: () => _controller.fitCamera(_fit),
+                      ),
+                      const SizedBox(height: 8),
+                      const RouteColorModeButton(),
+                    ],
                   ),
                 ],
               ),
+            ),
+          ),
+          Positioned(
+            left: 12,
+            bottom: 12,
+            child: SafeArea(
+              child: IgnorePointer(child: SpeedLegend(scale: _scale)),
             ),
           ),
         ],

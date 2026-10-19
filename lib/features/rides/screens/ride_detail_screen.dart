@@ -8,6 +8,7 @@ import 'package:pedali/core/widgets/app_header.dart';
 import 'package:pedali/core/widgets/async_value_view.dart';
 import 'package:pedali/core/widgets/empty_state.dart';
 import 'package:pedali/core/widgets/show_confirm_dialog.dart';
+import 'package:pedali/features/map/providers/route_points_provider.dart';
 import 'package:pedali/features/map/providers/simplified_route_provider.dart';
 import 'package:pedali/features/map/widgets/route_fullscreen_screen.dart';
 import 'package:pedali/features/map/widgets/route_map.dart';
@@ -156,13 +157,12 @@ class RideDetailScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   AsyncValueView(
-                    value: routeAsync,
+                    value: ref.watch(routePointsProvider(rideId)),
                     stateHeight: RouteMap.defaultHeight,
                     errorTitle: t.routeLoadError,
                     retryDescription: t.tryAgainLater,
                     retryLabel: t.tryAgain,
-                    onRetry: () =>
-                        ref.invalidate(simplifiedRouteProvider(rideId)),
+                    onRetry: () => ref.invalidate(routePointsProvider(rideId)),
                     data: (route) => RouteMap(
                       segments: route,
                       onExpand: () => Navigator.push(

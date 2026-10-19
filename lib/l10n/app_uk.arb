@@ -150,5 +150,6 @@
   "recordingNotificationText": "Записую поїздку",
   "locationAccessError": "Немає доступу до геолокації. Перевір дозвіл і чи ввімкнено GPS.",
   "achievementUnlocked": "Нове досягнення",
-  "viewAllAchievements": "Усі досягнення"
+  "viewAllAchievements": "Усі досягнення",
+  "routeColorTooltip": "Колір маршруту"
 }
