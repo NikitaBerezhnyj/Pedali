@@ -1,0 +1,1 @@
+enum RouteColorMode { brand, speed }
